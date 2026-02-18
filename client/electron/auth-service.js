@@ -4,11 +4,14 @@ const url = require('url');
 const keytar = require('keytar');
 const os = require('os');
 
-const apiIdentifier = 'https://polyquiz.com/api';
-const auth0Domain = 'polyquiz.ca.auth0.com';
-const clientId = 'G1cCt7EvlLE6kM2E21oTBc1nfmDbvD8P';
+const apiIdentifier = process.env.AUTH0_AUDIENCE;
+// AUTH0_DOMAIN can be "tenant.auth0.com" or "https://tenant.auth0.com/"
+const rawDomain = process.env.AUTH0_DOMAIN;
+const auth0Domain = rawDomain.replace(/^https?:\/\//, '').replace(/\/$/, '');
+const clientId = process.env.AUTH0_CLIENT_ID || '';
 
-const redirectUri = 'http://localhost/callback';
+const redirectUri = process.env.AUTH0_REDIRECT_URI || 'http://localhost/callback';
+const logoutReturnTo = process.env.AUTH0_LOGOUT_RETURN_TO || 'http://localhost/logout';
 
 const keytarService = 'electron-openid-oauth';
 const keytarAccount = os.userInfo().username;
@@ -128,7 +131,7 @@ async function logoutFromAuth0() {
         await axios.get(logoutUrl, {
             params: {
                 client_id: clientId,
-                returnTo: 'http://localhost/logout',
+                returnTo: logoutReturnTo,
             },
         });
     } catch (error) {

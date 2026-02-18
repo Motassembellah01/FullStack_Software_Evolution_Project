@@ -8,7 +8,7 @@ import { QuestionService } from '@app/core/services/question-service/question.se
 import { AlertDialogComponent } from '@app/shared/alert-dialog/alert-dialog.component';
 import { KeyGenerator } from '@app/shared/key-generator/key-generator';
 import { Observable, Subject, map, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { ServerConfigService } from '@app/core/services/server-config/server-config.service';
 import { AccountService } from '../account-service/account.service';
 
 @Injectable({
@@ -36,7 +36,8 @@ export class GameServiceService {
         public questionSrv: QuestionService,
         public router: Router,
         private dialog: MatDialog,
-        private accountService: AccountService
+        private accountService: AccountService,
+        private serverConfig: ServerConfigService,
     ) {
         this.resetCurrentGame();
         this.updateGameList();
@@ -161,15 +162,15 @@ export class GameServiceService {
     }
 
     getGameById(id: string): Observable<Game> {
-        return this.http.get<Game>(`${environment.serverUrl}/games/${id}`).pipe(map((game) => Game.parseGame(game)));
+        return this.http.get<Game>(`${this.serverConfig.serverUrl}/games/${id}`).pipe(map((game) => Game.parseGame(game)));
     }
 
     getGameByTitle(title: string): Observable<Game> {
-        return this.http.get<Game>(`${environment.serverUrl}/games/title/${title}`).pipe(map((game) => Game.parseGame(game)));
+        return this.http.get<Game>(`${this.serverConfig.serverUrl}/games/title/${title}`).pipe(map((game) => Game.parseGame(game)));
     }
 
     deleteGame(id: string): Observable<Game | null> {
-        return this.http.delete<Game | null>(`${environment.serverUrl}/games/${id}`).pipe(
+        return this.http.delete<Game | null>(`${this.serverConfig.serverUrl}/games/${id}`).pipe(
             tap(() => {
                 this.updateGameList();
             }),
@@ -177,7 +178,7 @@ export class GameServiceService {
     }
 
     addGame(game: Game): Observable<Game> {
-        return this.http.post<Game>(`${environment.serverUrl}/games`, game).pipe(
+        return this.http.post<Game>(`${this.serverConfig.serverUrl}/games`, game).pipe(
             tap(() => {
                 this.updateGameList();
             }),
@@ -201,7 +202,7 @@ export class GameServiceService {
 
     updateGame(game: Game): Observable<Game> {
         if (this.gameExists) {
-            return this.http.put<Game>(`${environment.serverUrl}/games`, game).pipe(
+            return this.http.put<Game>(`${this.serverConfig.serverUrl}/games`, game).pipe(
                 tap(() => {
                     this.updateGameList();
                     this.resetCurrentGame();
@@ -226,7 +227,7 @@ export class GameServiceService {
 
     updateGameVisibility(id: string, isVisible: boolean): Observable<Game> {
         const updateData = { isVisible };
-        return this.http.patch<Game>(environment.serverUrl + `/games/${id}/update-visibility`, updateData);
+        return this.http.patch<Game>(this.serverConfig.serverUrl + `/games/${id}/update-visibility`, updateData);
     }
 
     /**
@@ -258,7 +259,7 @@ export class GameServiceService {
     }
 
     validateName(title: string): Observable<boolean> {
-        return this.http.post<{ titleExists: boolean }>(`${environment.serverUrl}/games/title`, { title }).pipe(map((result) => result.titleExists));
+        return this.http.post<{ titleExists: boolean }>(`${this.serverConfig.serverUrl}/games/title`, { title }).pipe(map((result) => result.titleExists));
     }
 
     generateId(length: number): string {
@@ -273,6 +274,6 @@ export class GameServiceService {
      * @returns the games list from database
      */
     getAllGames(): Observable<Game[]> {
-        return this.http.get<Game[]>(`${environment.serverUrl}/games`);
+        return this.http.get<Game[]>(`${this.serverConfig.serverUrl}/games`);
     }
 }

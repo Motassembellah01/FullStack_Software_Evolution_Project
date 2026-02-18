@@ -43,6 +43,7 @@
     },
     "private": true,
     "dependencies": {
+        "dotenv": "^16.4.5",
         "@angular/animations": "^18.2.2",
         "@angular/cdk": "^18.2.14",
         "@angular/common": "18.2.2",

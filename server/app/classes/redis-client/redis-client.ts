@@ -1,15 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createClient } from 'redis';
 
 @Injectable()
 export class RedisClient {
     client: any;
-    constructor(private logger: Logger) {
+    constructor(
+        private logger: Logger,
+        private configService: ConfigService,
+    ) {
         this.client = createClient({
-            password: 'B3tRd0xeePGNfsxSOPlMAdoHLwmCYlc3',
+            password: this.configService.get<string>('REDIS_PASSWORD'),
             socket: {
-                host: 'redis-10972.c11.us-east-1-3.ec2.redns.redis-cloud.com',
-                port: 10972,
+                host: this.configService.get<string>('REDIS_HOST'),
+                port: this.configService.get<number>('REDIS_PORT') ?? 6379,
             },
         });
         this.client.on('error', (err) => {

@@ -6,9 +6,9 @@ import { CurrentMatchesDto } from '@app/core/classes/match/dto/current-matches.d
 import { Match } from '@app/core/classes/match/match';
 import { MatchHistory } from '@app/core/interfaces/match-history';
 import { Validation } from '@app/core/interfaces/validation';
+import { ServerConfigService } from '@app/core/services/server-config/server-config.service';
 import { AlertDialogComponent } from '@app/shared/alert-dialog/alert-dialog.component';
 import { Observable, catchError, map, of } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 /**
  * This class allows to centralize la communication with the server during a match.
@@ -17,11 +17,15 @@ import { environment } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class MatchCommunicationService {
-    constructor(private httpClient: HttpClient, private dialog: MatDialog) {}
+    constructor(
+        private httpClient: HttpClient,
+        private dialog: MatDialog,
+        private serverConfig: ServerConfigService,
+    ) {}
 
     isValidAccessCode(accessCode: string): Observable<boolean> {
         if (!accessCode) return of(false);
-        return this.httpClient.get<boolean>(`${environment.serverUrl}/matches/match/validity/${accessCode}`).pipe(
+        return this.httpClient.get<boolean>(`${this.serverConfig.serverUrl}/matches/match/validity/${accessCode}`).pipe(
             map((accessCodeExists) => accessCodeExists),
             catchError(() => {
                 this.dialog.open(AlertDialogComponent, {
@@ -40,7 +44,7 @@ export class MatchCommunicationService {
             accessCode,
             name,
         };
-        return this.httpClient.post<boolean>(`${environment.serverUrl}/matches/match/playerNameValidity`, validationObject).pipe(
+        return this.httpClient.post<boolean>(`${this.serverConfig.serverUrl}/matches/match/playerNameValidity`, validationObject).pipe(
             map((isPlayerNameValidForGame) => isPlayerNameValidForGame),
             catchError(() => {
                 this.dialog.open(AlertDialogComponent, {
@@ -55,7 +59,7 @@ export class MatchCommunicationService {
     }
 
     isMatchAccessible(accessCode: string): Observable<boolean> {
-        return this.httpClient.get<boolean>(`${environment.serverUrl}/matches/match/accessibility/${accessCode}`).pipe(
+        return this.httpClient.get<boolean>(`${this.serverConfig.serverUrl}/matches/match/accessibility/${accessCode}`).pipe(
             map((isAccessible) => isAccessible),
             catchError(() => {
                 this.dialog.open(AlertDialogComponent, {
@@ -70,7 +74,7 @@ export class MatchCommunicationService {
     }
 
     setAccessibility(accessCode: string): Observable<unknown> {
-        return this.httpClient.patch(`${environment.serverUrl}/matches/match/accessibility/${accessCode}`, {}).pipe(
+        return this.httpClient.patch(`${this.serverConfig.serverUrl}/matches/match/accessibility/${accessCode}`, {}).pipe(
             catchError(() => {
                 this.dialog.open(AlertDialogComponent, {
                     data: {
@@ -84,27 +88,27 @@ export class MatchCommunicationService {
     }
 
     createMatch(createMatchDto: CreateMatchDto): Observable<Match> {
-        return this.httpClient.post<Match>(`${environment.serverUrl}/matches/match`, createMatchDto);
+        return this.httpClient.post<Match>(`${this.serverConfig.serverUrl}/matches/match`, createMatchDto);
     }
 
     getAllMatches(): Observable<CurrentMatchesDto[]> {
-        return this.httpClient.get<CurrentMatchesDto[]>(`${environment.serverUrl}/matches`);
+        return this.httpClient.get<CurrentMatchesDto[]>(`${this.serverConfig.serverUrl}/matches`);
     }
 
     deleteMatchByAccessCode(accessCode: string): Observable<unknown> {
-        return this.httpClient.delete<Match | null>(`${environment.serverUrl}/matches/match/${accessCode}`);
+        return this.httpClient.delete<Match | null>(`${this.serverConfig.serverUrl}/matches/match/${accessCode}`);
     }
 
     saveMatchHistory(matchAccessCode: string): Observable<unknown> {
-        return this.httpClient.post(`${environment.serverUrl}/matches/match/${matchAccessCode}/history`, null);
+        return this.httpClient.post(`${this.serverConfig.serverUrl}/matches/match/${matchAccessCode}/history`, null);
     }
 
     getMatchHistory(): Observable<MatchHistory[]> {
-        return this.httpClient.get<MatchHistory[]>(`${environment.serverUrl}/matches/history`);
+        return this.httpClient.get<MatchHistory[]>(`${this.serverConfig.serverUrl}/matches/history`);
     }
 
     deleteMatchHistory(): Observable<unknown> {
-        return this.httpClient.delete(`${environment.serverUrl}/matches/history`).pipe(
+        return this.httpClient.delete(`${this.serverConfig.serverUrl}/matches/history`).pipe(
             catchError(() => {
                 this.dialog.open(AlertDialogComponent, {
                     data: {
@@ -119,6 +123,6 @@ export class MatchCommunicationService {
 
     joinMatch(accessCode: string, playerName: string): Observable<any> {
         const body = { accessCode, playerName };
-        return this.httpClient.post(`${environment.serverUrl}/matches/join-match`, body);
+        return this.httpClient.post(`${this.serverConfig.serverUrl}/matches/join-match`, body);
     }
 }

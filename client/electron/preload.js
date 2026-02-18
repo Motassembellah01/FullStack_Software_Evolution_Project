@@ -6,6 +6,7 @@ const electronAPI = {
     logIn: () => ipcRenderer.send('auth:log-in'),
     getPrivateData: () => ipcRenderer.invoke('api:get-private-data'),
     getAccessToken: () => ipcRenderer.invoke('auth:get-access-token'),
+    getServerUrl: () => ipcRenderer.invoke('app:get-server-url'),
     openChatWindow: () => ipcRenderer.invoke('window:open-chat-window'),
     isChatClosed: (callback) =>
         ipcRenderer.on('fromMain', (event, message) => {

@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Language, ThemeVisual } from '@app/core/constants/constants';
 import { Account } from '@app/core/interfaces/account/account';
 import { FriendRequestData } from '@app/core/interfaces/friend-request-data';
+import { ServerConfigService } from '@app/core/services/server-config/server-config.service';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { SessionHistoryDto } from '../../models/account/session-history.dto';
 
 @Injectable({
@@ -22,62 +22,65 @@ export class AccountService {
 
     isInGame: boolean = false;
     isInHomePage: boolean = false;
-    constructor(private readonly http: HttpClient) {}
+    constructor(
+        private readonly http: HttpClient,
+        private readonly serverConfig: ServerConfigService,
+    ) {}
 
     deleteSession() {
-        return this.http.delete(`${environment.serverUrl}/sessions/${this.auth0Id}`);
+        return this.http.delete(`${this.serverConfig.serverUrl}/sessions/${this.auth0Id}`);
     }
 
     getAccount(userID: string = this.auth0Id) {
-        return this.http.get<Account>(`${environment.serverUrl}/accounts/${userID}`);
+        return this.http.get<Account>(`${this.serverConfig.serverUrl}/accounts/${userID}`);
     }
 
     getAccountByPseudonym(pseudo: string) {
-        return this.http.get<Account>(`${environment.serverUrl}/accounts/pseudonym/${pseudo}`);
+        return this.http.get<Account>(`${this.serverConfig.serverUrl}/accounts/pseudonym/${pseudo}`);
     }
 
     getSomeAccounts(userIds: string[]): Observable<{ userId: string; pseudonym: string; avatarUrl: string }[]> {
-        return this.http.post<{ userId: string; pseudonym: string; avatarUrl: string }[]>(`${environment.serverUrl}/accounts/batch`, {
+        return this.http.post<{ userId: string; pseudonym: string; avatarUrl: string }[]>(`${this.serverConfig.serverUrl}/accounts/batch`, {
             userIds,
         });
     }
 
     getAccounts() {
-        return this.http.get<Account[]>(`${environment.serverUrl}/accounts`);
+        return this.http.get<Account[]>(`${this.serverConfig.serverUrl}/accounts`);
     }
 
     changeLang(lang: Language) {
-        return this.http.patch<Account>(`${environment.serverUrl}/accounts/${this.auth0Id}/lang/${lang}`, {});
+        return this.http.patch<Account>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/lang/${lang}`, {});
     }
 
     updateAvatar(avatarUrl: string) {
-        return this.http.patch<Account>(`${environment.serverUrl}/accounts/${this.auth0Id}/avatar`, {
+        return this.http.patch<Account>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/avatar`, {
             avatarUrl,
         });
     }
 
     updateTheme(themeVisual: ThemeVisual) {
-        return this.http.patch<Account>(`${environment.serverUrl}/accounts/${this.auth0Id}/theme/${themeVisual}`, {});
+        return this.http.patch<Account>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/theme/${themeVisual}`, {});
     }
 
     updateMoney(money: number): Observable<Account> {
-        return this.http.patch<Account>(`${environment.serverUrl}/accounts/${this.auth0Id}/money`, { money });
+        return this.http.patch<Account>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/money`, { money });
     }
 
     updateOwnedThemes(theme: ThemeVisual[]) {
-        return this.http.patch<Account>(`${environment.serverUrl}/accounts/${this.auth0Id}/ownedThemes`, { ownedThemes: theme });
+        return this.http.patch<Account>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/ownedThemes`, { ownedThemes: theme });
     }
 
     updateOwnedAvatars(avatar: string[]) {
-        return this.http.patch<Account>(`${environment.serverUrl}/accounts/${this.auth0Id}/ownedAvatars`, { ownedAvatars: avatar });
+        return this.http.patch<Account>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/ownedAvatars`, { ownedAvatars: avatar });
     }
 
     updateName(newName: string) {
-        return this.http.patch<Account>(`${environment.serverUrl}/accounts/${this.auth0Id}/pseudonym`, { newPseudonym: newName });
+        return this.http.patch<Account>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/pseudonym`, { newPseudonym: newName });
     }
 
     getSessionHistory() {
-        return this.http.get<SessionHistoryDto[]>(`${environment.serverUrl}/sessions/history/${this.auth0Id}`);
+        return this.http.get<SessionHistoryDto[]>(`${this.serverConfig.serverUrl}/sessions/history/${this.auth0Id}`);
     }
 
     getLocalAvatar(avatarUrl: string = this.account.avatarUrl) {
@@ -94,15 +97,15 @@ export class AccountService {
     }
 
     getFriends() {
-        return this.http.get<string[]>(`${environment.serverUrl}/accounts/${this.auth0Id}/friends`);
+        return this.http.get<string[]>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/friends`);
     }
 
     getFriendRequests() {
-        return this.http.get<FriendRequestData[]>(`${environment.serverUrl}/accounts/${this.auth0Id}/friend-requests`);
+        return this.http.get<FriendRequestData[]>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/friend-requests`);
     }
 
     getFriendsThatUserRequested() {
-        return this.http.get<string[]>(`${environment.serverUrl}/accounts/${this.auth0Id}/friends-requested`);
+        return this.http.get<string[]>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/friends-requested`);
     }
 
     isThemeOwned(theme: string): boolean {
@@ -114,10 +117,10 @@ export class AccountService {
     } 
 
     getBlockedUsers() {
-        return this.http.get<string[]>(`${environment.serverUrl}/accounts/${this.auth0Id}/blockedUsers`);
+        return this.http.get<string[]>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/blockedUsers`);
     }
 
     getBlockedBy() {
-        return this.http.get<string[]>(`${environment.serverUrl}/accounts/${this.auth0Id}/blockedBy`);
+        return this.http.get<string[]>(`${this.serverConfig.serverUrl}/accounts/${this.auth0Id}/blockedBy`);
     }
 }

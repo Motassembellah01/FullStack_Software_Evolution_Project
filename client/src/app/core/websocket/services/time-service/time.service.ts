@@ -3,10 +3,10 @@ import { Injectable } from '@angular/core';
 import { DURATIONS, SocketsOnEvents, SocketsSendEvents } from '@app/core/constants/constants';
 import { StopServerTimerRequest } from '@app/core/interfaces/stop-server-timer-request';
 import { TimerRequest } from '@app/core/interfaces/timer-request';
+import { ServerConfigService } from '@app/core/services/server-config/server-config.service';
 import { JoinMatchService } from '@app/core/services/join-match/join-match.service';
 import { SocketService } from '@app/core/websocket/services/socket-service/socket.service';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 type TimerCallback = () => void;
 /**
@@ -21,6 +21,7 @@ export class TimeService {
         public socketService: SocketService,
         public joinMatchService: JoinMatchService,
         private readonly http: HttpClient,
+        private readonly serverConfig: ServerConfigService,
     ) {}
 
     get timer(): number {
@@ -114,6 +115,6 @@ export class TimeService {
     }
 
     getTimerByAccessCode(accessCode: string): Observable<any> {
-        return this.http.get(`${environment.serverUrl}/matches/timer/${accessCode}`);
+        return this.http.get(`${this.serverConfig.serverUrl}/matches/timer/${accessCode}`);
     }
 }

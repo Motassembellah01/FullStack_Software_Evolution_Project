@@ -30,8 +30,9 @@ function createAppWindow() {
         try {
             const accessToken = authService.getAccessToken();
             if (!accessToken) return;
+            const serverUrl = process.env.SERVER_URL || 'http://localhost:3000';
             const response = await axios.delete(
-                `http://ec2-15-222-235-159.ca-central-1.compute.amazonaws.com:3000/api/sessions/${authService.getProfile().sub}`,
+                `${serverUrl}/api/sessions/${authService.getProfile().sub}`,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,

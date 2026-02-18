@@ -1,3 +1,6 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 const { app, ipcMain, BrowserWindow } = require('electron');
 
 const { createAuthWindow, createLogoutWindow } = require('./electron/auth-process');
@@ -29,6 +32,7 @@ app.on('ready', () => {
         createLogoutWindow();
     });
     ipcMain.handle('auth:get-access-token', authService.getAccessToken);
+    ipcMain.handle('app:get-server-url', () => process.env.SERVER_URL || 'http://localhost:3000');
     ipcMain.handle('window:open-chat-window', () => {
         createChatWin();
     });
