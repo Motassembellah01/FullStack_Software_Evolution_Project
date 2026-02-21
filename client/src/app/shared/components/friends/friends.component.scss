@@ -151,10 +151,11 @@ $radius-full: 9999px;
 
 .tab-nav {
     display: flex;
-    gap: 4px;
+    gap: 2px;
     background: $border-light;
     border-radius: $radius-md;
     padding: 3px;
+    width: 100%;
 }
 
 .tab-btn {
@@ -162,13 +163,13 @@ $radius-full: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    padding: 9px 6px;
+    gap: 4px;
+    padding: 8px 4px;
     border: none;
     border-radius: $radius-sm;
     background: transparent;
     color: $text-secondary;
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -188,13 +189,16 @@ $radius-full: 9999px;
 }
 
 .tab-icon {
-    font-size: 19px;
-    width: 19px;
-    height: 19px;
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
 }
 
 .tab-label {
     display: inline;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tab-count {

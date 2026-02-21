@@ -382,10 +382,12 @@ export const FRIENDS_FR = {
     discover: 'Découvrir',
     friends: 'Amis',
     friendRequest: 'Demandes',
+    blocked: 'Bloqués',
 }
 
 export const FRIENDS_EN = {
     discover: 'Discover',
     friends: 'Friends',
     friendRequest: 'Requests',
+    blocked: 'Blocked',
 }

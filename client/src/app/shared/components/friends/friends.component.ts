@@ -55,7 +55,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
     readonly FriendTab = FriendTab;
 
     tabs: string[];
-    currentTab: FriendTab = FriendTab.Discover;
+    currentTab: FriendTab = FriendTab.Friends;
     searchTerm: string = '';
 
     filteredDiscoverList: AccountFriend[] = [];
@@ -63,6 +63,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
     blockedUsersList: AccountFriend[] = [];
 
     private langChangeSubscription: Subscription;
+    private accountsChangeSubscription: Subscription;
     private lastFilteredAccountsLength = 0;
 
     constructor(
@@ -87,20 +88,28 @@ export class FriendsComponent implements OnInit, OnDestroy {
         this.langChangeSubscription = this.translateService.onLangChange.subscribe(() => {
             this.updateLanguageDependentProperties();
         });
+
+        this.accountsChangeSubscription = this.accountListenerService.accountsChanged$.subscribe(() => {
+            this.refreshFilteredLists();
+        });
     }
 
     ngOnDestroy(): void {
         if (this.langChangeSubscription) {
             this.langChangeSubscription.unsubscribe();
         }
+        if (this.accountsChangeSubscription) {
+            this.accountsChangeSubscription.unsubscribe();
+        }
     }
 
-    get tabLabel(): { discover: string; friends: string; requests: string } {
+    get tabLabel(): { discover: string; friends: string; requests: string; blocked: string } {
         const isFrench = this.translateService.currentLang === 'fr';
         return {
             discover: isFrench ? FRIENDS_FR.discover : FRIENDS_EN.discover,
             friends: isFrench ? FRIENDS_FR.friends : FRIENDS_EN.friends,
             requests: isFrench ? FRIENDS_FR.friendRequest : FRIENDS_EN.friendRequest,
+            blocked: isFrench ? FRIENDS_FR.blocked : FRIENDS_EN.blocked,
         };
     }
 

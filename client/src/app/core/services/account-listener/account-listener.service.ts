@@ -3,6 +3,7 @@ import { Account } from '@app/core/interfaces/account/account';
 import { AccountFriend } from '@app/core/interfaces/account/account_friends';
 import { FriendRequestData } from '@app/core/interfaces/friend-request-data';
 import { SocketService } from '@app/core/websocket/services/socket-service/socket.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class AccountListenerService {
   friends: string[] = [];
   blocked: string[] = [];
   UsersBlockingMe: string[] = [];
+  accountsChanged$ = new Subject<void>();
   constructor(private socketService: SocketService) {}
 
   setUpListeners(): void {
@@ -21,36 +23,43 @@ export class AccountListenerService {
     this.accounts = this.mapAccounts(this.accounts);
     this.socketService.on('accountCreated', (accounts: Partial<Account>[]) => {
       this.accounts = this.mapAccounts(accounts);
+      this.accountsChanged$.next();
     });
 
     this.socketService.on('friendRequestsThatUserReceived', (friendRequests: FriendRequestData[]) => {
       this.friendRequestsReceived = friendRequests;
       this.accounts = this.mapAccounts(this.accounts);
+      this.accountsChanged$.next();
     });
 
     this.socketService.on('friendsThatUserRequested', (friendsThatUserRequested: string[]) => {
       this.friendsThatUserRequested = friendsThatUserRequested;
       this.accounts = this.mapAccounts(this.accounts);
+      this.accountsChanged$.next();
     });
 
     this.socketService.on('updateFriendListReceiver', (friendsReceiver: string[]) => {
       this.friends = friendsReceiver;
       this.accounts = this.mapAccounts(this.accounts);
+      this.accountsChanged$.next();
     });
 
     this.socketService.on('updateFriendListSender', (friendsSender: string[]) => {
       this.friends = friendsSender;
       this.accounts = this.mapAccounts(this.accounts);
+      this.accountsChanged$.next();
     });
 
     this.socketService.on('updateBlockedUsers', (blockedUsers: string[]) => {
       this.blocked = blockedUsers;
       this.accounts = this.mapAccounts(this.accounts);
+      this.accountsChanged$.next();
     });
 
     this.socketService.on('updateBlockedBy', (blockedBy: string[]) => {
       this.UsersBlockingMe = blockedBy;
       this.accounts = this.mapAccounts(this.accounts);
+      this.accountsChanged$.next();
     });
   }
 

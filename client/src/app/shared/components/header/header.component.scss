@@ -6,18 +6,56 @@
     transition: transform 0.3s ease-in-out;
 }
 
-.money,
-.friends,
-.profile,
-.chat {
+.profile {
     margin-left: 10px;
 }
 
-.friends,
-.chat,
-.money {
-    color: rgb(41, 41, 100) !important;
+.shop-group {
+    display: flex;
+    margin-left: 10px;
     margin-top: 0.6rem;
+    gap: 2px;
+}
+
+.cookie-display {
+    display: flex;
+    gap: 4px;
+    padding: 4px 6px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.cookie-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.header-btn {
+    margin-left: 6px;
+    margin-top: 0.6rem;
+    min-width: 40px !important;
+    padding: 0 8px !important;
+    border-radius: 8px !important;
+    transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.header-btn:hover {
+    transform: scale(1.08);
+}
+
+.shop-group .header-btn {
+    margin-left: 0;
+    margin-top: 0;
+}
+
+.header-icon {
+    font-size: 1.6rem;
+    position: static !important;
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+    left: auto !important;
+    color: #3b82f6;
+    transition: color 0.2s ease;
 }
 
 .title-chat {
@@ -362,21 +400,17 @@ mat-icon {
     font-weight: 500;
 }
 
-.chat-btn-unread {
-    color: rgb(165, 59, 59) !important;
-}
-
-.chat-btn {
-    color: rgb(41, 41, 100) !important;
-}
 
 .player-name {
     text-align: center;
 }
 
 .profile-btn {
-    width: 2rem;
-    height: 5.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: auto;
+    padding: 4px 8px !important;
 }
 
 .red {
@@ -411,17 +445,6 @@ button.toggled {
     margin-top: 10px;
 }
 
-.money-icon {
-    width: 2rem;
-    height: 2rem;
-}
-
-.money {
-    display: flex; /* Définit un conteneur Flexbox pour aligner les enfants horizontalement */
-    align-items: center; /* Centre les éléments verticalement */
-    gap: 8px; /* Ajoute un espace horizontal entre les enfants */
-    padding: 8px; /* Facultatif : pour donner de l'espace interne au bouton */
-}
 
 .color-valentines {
     background-color: #e8bdb5;
@@ -437,13 +460,6 @@ button.toggled {
     font-weight: bold;
 }
 
-// .money {
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     gap: 8px;
-//   }
-
 .friends-box {
     width: 320px;
 }
@@ -456,20 +472,18 @@ button.toggled {
 
 .money-amount {
     color: #22c3e6;
-}
-
-.content-line {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 span {
     margin-top: 0.5rem;
 }
 .pseudo {
-    word-wrap: break-word; 
-    overflow-wrap: break-word;
-    white-space: normal;
-    max-width: 3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 7rem;
+    margin: 0;
+    font-size: 0.85rem;
 }

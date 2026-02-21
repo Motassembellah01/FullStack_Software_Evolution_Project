@@ -27,14 +27,6 @@
     <div class="tab-nav">
         <button
             class="tab-btn"
-            [class.active]="currentTab === FriendTab.Discover"
-            (click)="switchTab(FriendTab.Discover)"
-        >
-            <mat-icon class="tab-icon">explore</mat-icon>
-            <span class="tab-label">{{ tabLabel.discover }}</span>
-        </button>
-        <button
-            class="tab-btn"
             [class.active]="currentTab === FriendTab.Friends"
             (click)="switchTab(FriendTab.Friends)"
         >
@@ -50,6 +42,14 @@
             <mat-icon class="tab-icon">person_add</mat-icon>
             <span class="tab-label">{{ tabLabel.requests }}</span>
             <span class="tab-count notification" *ngIf="requestCount > 0">{{ requestCount }}</span>
+        </button>
+        <button
+            class="tab-btn"
+            [class.active]="currentTab === FriendTab.Discover"
+            (click)="switchTab(FriendTab.Discover)"
+        >
+            <mat-icon class="tab-icon">explore</mat-icon>
+            <span class="tab-label">{{ tabLabel.discover }}</span>
         </button>
         <button
             class="tab-btn"

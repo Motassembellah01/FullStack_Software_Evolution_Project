@@ -9,20 +9,23 @@
         >
             {{ 'NAV_BUTTONS.HOME' | translate }}
         </button>
-        <button *ngIf="!accountService.isInGame" mat-button class="money" (click)="toggleShop()" [class.toggled]="generalChatService.isShopOpen">
-            <div class="content-line">
-                <span class="span money-amount bold">{{ accountService.money }}</span>
-                <img src="assets/cookie_icon.png" alt="Cookie Icon" class="money-icon" />
+        <div *ngIf="!accountService.isInGame" class="shop-group">
+            <div class="cookie-display">
+                <span class="money-amount bold">{{ accountService.money }}</span>
+                <img src="assets/cookie_icon.png" alt="Cookie Icon" class="cookie-icon" />
             </div>
-        </button>
+            <button mat-button class="header-btn shop-btn" (click)="toggleShop()" [class.toggled]="generalChatService.isShopOpen">
+                <i class="material-icons header-icon">shopping_cart</i>
+            </button>
+        </div>
         <button
             *ngIf="!accountService.isInGame"
             mat-button
-            class="friends"
+            class="header-btn friends-btn"
             (click)="toggleFriends()"
             [class.toggled]="generalChatService.isFriendsOpen"
         >
-            <img src="assets/icons/ic_friends.png" alt="Money Icon" class="money-icon" />
+            <i class="material-icons header-icon">people</i>
             <span *ngIf="accountListenerService.friendRequestsReceived.length > 0" class="tab-badge">
                 {{ accountListenerService.friendRequestsReceived.length }}
             </span>
@@ -31,20 +34,20 @@
             mat-button
             *ngIf="getTotalUnreadMessages() === 0"
             (click)="toggleChat()"
-            class="pointer chat-btn chat"
+            class="header-btn chat-btn"
             [class.toggled]="generalChatService.isChatOpen"
             [matTooltip]="this.generalChatService.isChatClosed ? 'Clavardage en mode fenêtré' : ''"
         >
-            <img src="assets/icons/chat.png" alt="Money Icon" class="money-icon" />
+            <i class="material-icons header-icon">forum</i>
         </button>
         <button
             mat-button
             *ngIf="getTotalUnreadMessages() > 0"
             (click)="toggleChat()"
-            class="pointer chat-btn-unread chat"
+            class="header-btn chat-btn-unread"
             [class.toggled]="generalChatService.isChatOpen"
         >
-            <i class="material-icons">mark_chat_unread</i>
+            <i class="material-icons header-icon">mark_chat_unread</i>
         </button>
         <div *ngIf="!accountService.isInGame" class="profile">
             <button mat-button class="profile-btn" (click)="toggleProfile()" [class.toggled]="generalChatService.isProfileOpen">
