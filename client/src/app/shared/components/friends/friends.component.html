@@ -55,9 +55,9 @@
             class="tab-btn"
             [class.active]="currentTab === FriendTab.Blocked"
             (click)="switchTab(FriendTab.Blocked)"
+            matTooltip="{{ tabLabel.blocked }}"
         >
             <mat-icon class="tab-icon">block</mat-icon>
-            <span class="tab-label">{{ tabLabel.blocked }}</span>
             <span class="tab-count" *ngIf="blockedCount > 0">{{ blockedCount }}</span>
         </button>
     </div>

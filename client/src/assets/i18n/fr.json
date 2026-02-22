@@ -153,7 +153,13 @@
         "NO_GAME_STARTED": "Aucune partie en cours ",
         "ACCESS_CODE": "Code d’accès",
         "EMPTY_WAITING_SUBTITLE": "Les nouvelles parties apparaîtront ici automatiquement",
-        "EMPTY_ONGOING_SUBTITLE": "Les parties en cours apparaîtront ici quand elles commenceront"
+        "EMPTY_ONGOING_SUBTITLE": "Les parties en cours apparaîtront ici quand elles commenceront",
+        "ERROR_EMPTY_CODE": "Le code d’accès ne peut pas être vide.",
+        "ERROR_FORBIDDEN": "Vous n’êtes pas ami avec l’organisateur OU un joueur qui vous a bloqué est dans la salle d’attente.",
+        "ERROR_NOT_FOUND": "Aucun match trouvé avec ce code d’accès.",
+        "ERROR_ALREADY_STARTED": "Cette partie a déjà commencé. Vous pouvez l’observer depuis la section "En cours".",
+        "ERROR_LOCKED": "Cette salle a été verrouillée par l’organisateur.",
+        "ERROR_FORBIDDEN_OBSERVER": "Ceci est un jeu d’amis ou un joueur vous a bloqué, vous ne pouvez pas accéder."
     },
     "STATISTICS": {
         "TITLE": "Statistiques ",

@@ -20,7 +20,7 @@
         <div class="quick-join-bar">
             <mat-form-field appearance="outline" class="code-input">
                 <mat-label>{{ 'JOIN_MATCH.ACCESS_CODE' | translate }}</mat-label>
-                <input maxlength="4" type="text" matInput [(ngModel)]="accessCode" required />
+                <input maxlength="4" type="text" matInput [(ngModel)]="accessCode" (input)="clearError()" required />
                 <mat-hint align="end">{{ accessCode.length }}/4</mat-hint>
             </mat-form-field>
             <button class="join-btn" mat-raised-button (click)="onJoinMatch()">
@@ -29,7 +29,7 @@
             </button>
         </div>
 
-        <div *ngIf="accessCodeError" class="error-banner" (click)="accessCodeError = false">
+        <div *ngIf="accessCodeError" class="error-banner" (click)="clearError()">
             <mat-icon>error_outline</mat-icon>
             <span>{{ errorMessage }}</span>
             <mat-icon class="dismiss-icon">close</mat-icon>
@@ -82,14 +82,21 @@
                                 <mat-icon *ngIf="!game.isFriendMatch">public</mat-icon>
                                 <mat-icon *ngIf="game.isFriendMatch">group</mat-icon>
                                 <span *ngIf="!game.isFriendMatch">{{ 'JOIN_MATCH_LABELS.PUBLIC' | translate }}</span>
-                                <span *ngIf="game.isFriendMatch && organiserIsFriend(game.managerId)">{{ game.managerName }}</span>
-                                <span *ngIf="game.isFriendMatch && !organiserIsFriend(game.managerId)">{{ 'JOIN_MATCH_LABELS.EXCLUSIVE_FRIEND' | translate }}</span>
+                                <span *ngIf="game.isFriendMatch" class="friend-badge-content">
+                                    {{ 'JOIN_MATCH_LABELS.EXCLUSIVE_FRIEND' | translate }}
+                                    <span class="badge-separator"></span>
+                                    {{ game.managerName }}
+                                </span>
                             </div>
                             <span class="access-code">#{{ game.accessCode }}</span>
                         </div>
 
                         <div class="card-body">
                             <h3 class="quiz-name">{{ game | localizedField:'quizName' }}</h3>
+                            <div class="organizer-row" *ngIf="!game.isFriendMatch">
+                                <mat-icon class="organizer-icon">person</mat-icon>
+                                <span class="organizer-name">{{ game.managerName }}</span>
+                            </div>
                             <div class="card-meta">
                                 <div class="meta-item">
                                     <mat-icon>people</mat-icon>
@@ -160,8 +167,11 @@
                             <mat-icon *ngIf="!game.isFriendMatch">public</mat-icon>
                             <mat-icon *ngIf="game.isFriendMatch">group</mat-icon>
                             <span *ngIf="!game.isFriendMatch">{{ 'JOIN_MATCH_LABELS.PUBLIC' | translate }}</span>
-                            <span *ngIf="game.isFriendMatch && organiserIsFriend(game.managerId)">{{ game.managerName }}</span>
-                            <span *ngIf="game.isFriendMatch && !organiserIsFriend(game.managerId)">{{ 'JOIN_MATCH_LABELS.EXCLUSIVE_FRIEND' | translate }}</span>
+                            <span *ngIf="game.isFriendMatch" class="friend-badge-content">
+                                {{ 'JOIN_MATCH_LABELS.EXCLUSIVE_FRIEND' | translate }}
+                                <span class="badge-separator"></span>
+                                {{ game.managerName }}
+                            </span>
                         </div>
                         <div class="live-badge">
                             <span class="live-dot-sm"></span>
@@ -171,6 +181,10 @@
 
                     <div class="card-body">
                         <h3 class="quiz-name">{{ game | localizedField:'quizName' }}</h3>
+                        <div class="organizer-row" *ngIf="!game.isFriendMatch">
+                            <mat-icon class="organizer-icon">person</mat-icon>
+                            <span class="organizer-name">{{ game.managerName }}</span>
+                        </div>
                         <div class="card-meta">
                             <div class="meta-item">
                                 <mat-icon>people</mat-icon>

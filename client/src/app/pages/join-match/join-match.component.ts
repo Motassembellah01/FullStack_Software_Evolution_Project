@@ -21,7 +21,7 @@ import { AppMaterialModule } from '@app/modules/material.module';
 import { ErrorMessageComponent } from '@app/shared/components/error-message/error-message.component';
 import { LoginComponent } from '@app/shared/components/login/login.component';
 import { LogoComponent } from '@app/shared/components/logo/logo.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LocalizedFieldPipe } from '@app/shared/pipes/localized-field.pipe';
 import { map, forkJoin, firstValueFrom, of } from 'rxjs';
 
@@ -69,7 +69,15 @@ export class JoinMatchComponent implements OnInit, OnDestroy {
         private histogramService: HistogramService,
         public joinMatchService: JoinMatchService,
         public accountListenerService: AccountListenerService,
+        private translateService: TranslateService,
     ) {}
+
+    clearError(): void {
+        if (this.accessCodeError) {
+            this.accessCodeError = false;
+            this.errorMessage = '';
+        }
+    }
 
     @HostListener('window:keydown.enter', ['$event'])
     onEnterKey(): void {
@@ -158,11 +166,15 @@ export class JoinMatchComponent implements OnInit, OnDestroy {
     }
 
     getWaitingGames() {
-        return this.currentMatches.filter((match) => !match.hasStarted) || [];
+        return this.currentMatches.filter((match) =>
+            !match.hasStarted && (!match.isFriendMatch || this.organiserIsFriend(match.managerId))
+        ) || [];
     }
 
     getOnGoingGames() {
-        return this.currentMatches.filter((match) => match.hasStarted) || [];
+        return this.currentMatches.filter((match) =>
+            match.hasStarted && (!match.isFriendMatch || this.organiserIsFriend(match.managerId))
+        ) || [];
     }
 
     async onJoinMatch(): Promise<void> {
@@ -170,23 +182,37 @@ export class JoinMatchComponent implements OnInit, OnDestroy {
 
         if (this.accessCode.trim() === '') {
             this.accessCodeError = true;
-            this.errorMessage = 'Le code d\u2019acc\u00e8s ne peut pas \u00eatre vide.';
+            this.errorMessage = this.translateService.instant('JOIN_MATCH.ERROR_EMPTY_CODE');
             return;
         }
 
         if ((await this.getForbidenCodes()).includes(this.accessCode)) {
             this.accessCodeError = true;
-            this.errorMessage = 'Vous n\'êtes pas ami avec l\'organisateur OU un joueur qui vous a bloqué est dans la salle d\'attente.';
+            this.errorMessage = this.translateService.instant('JOIN_MATCH.ERROR_FORBIDDEN');
             return;
         }
 
-        const match = this.getWaitingGames().find((m) => m.accessCode === this.accessCode);
+        const matchInAll = this.currentMatches.find((m) => m.accessCode === this.accessCode);
 
-        if (!match) {
+        if (!matchInAll) {
             this.accessCodeError = true;
-            this.errorMessage = 'Aucun match trouvé avec ce code d\u2019acc\u00e8s.';
+            this.errorMessage = this.translateService.instant('JOIN_MATCH.ERROR_NOT_FOUND');
             return;
         }
+
+        if (matchInAll.hasStarted) {
+            this.accessCodeError = true;
+            this.errorMessage = this.translateService.instant('JOIN_MATCH.ERROR_ALREADY_STARTED');
+            return;
+        }
+
+        if (!matchInAll.isAccessible) {
+            this.accessCodeError = true;
+            this.errorMessage = this.translateService.instant('JOIN_MATCH.ERROR_LOCKED');
+            return;
+        }
+
+        const match = matchInAll;
 
         if (match.isPricedMatch) {
             const newMoney = this.accountService.money - match.priceMatch;
@@ -221,7 +247,7 @@ export class JoinMatchComponent implements OnInit, OnDestroy {
     async joinGame(accessCode: string): Promise<void> {
         if ((await this.getForbidenCodes()).includes(accessCode)) {
             this.accessCodeError = true;
-            this.errorMessage = 'Vous n\'êtes pas ami avec l\'organisateur OU un joueur qui vous a bloqué est dans la salle d\'attente.';
+            this.errorMessage = this.translateService.instant('JOIN_MATCH.ERROR_FORBIDDEN');
             return;
         }
 
@@ -261,7 +287,7 @@ export class JoinMatchComponent implements OnInit, OnDestroy {
     async joinAsObserver(accessCode: string): Promise<void> {
         if ((await this.getForbidenCodes()).includes(accessCode)) {
             this.accessCodeError = true;
-            this.errorMessage = 'Ceci est un jeu d\'amis ou un joueur vous a bloqué, vous ne pouvez pas accéder.';
+            this.errorMessage = this.translateService.instant('JOIN_MATCH.ERROR_FORBIDDEN_OBSERVER');
             return;
         }
         this.socketService.send<JoinMatchObserverDto>(SocketsSendEvents.JoinMatchObserver, { accessCode, name: this.accountService.account.pseudonym });

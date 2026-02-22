@@ -153,7 +153,13 @@
         "NO_GAME_STARTED": "No games in progress",
         "ACCESS_CODE": "Access code",
         "EMPTY_WAITING_SUBTITLE": "New games will appear here automatically",
-        "EMPTY_ONGOING_SUBTITLE": "Games in progress will appear here when they start"
+        "EMPTY_ONGOING_SUBTITLE": "Games in progress will appear here when they start",
+        "ERROR_EMPTY_CODE": "The access code cannot be empty.",
+        "ERROR_FORBIDDEN": "You are not friends with the organizer OR a player who blocked you is in the waiting room.",
+        "ERROR_NOT_FOUND": "No match found with this access code.",
+        "ERROR_ALREADY_STARTED": "This match has already started. You can observe it from the \"In Progress\" section.",
+        "ERROR_LOCKED": "This room has been locked by the organizer.",
+        "ERROR_FORBIDDEN_OBSERVER": "This is a friends-only game or a player has blocked you. You cannot join."
     },
     "STATISTICS": {
         "TITLE": "Statistics ",
