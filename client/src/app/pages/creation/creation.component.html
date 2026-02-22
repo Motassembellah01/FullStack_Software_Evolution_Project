@@ -1,4 +1,11 @@
-<div class="creation-page">
+<div
+    class="creation-page"
+    [ngClass]="{
+        'theme-dark': accountService.theme === 'dark',
+        'theme-christmas': accountService.theme === 'christmas',
+        'theme-valentines': accountService.theme === 'valentines'
+    }"
+>
     <div class="hero-section">
         <div class="hero-badge">
             <span class="material-icons">sports_esports</span>

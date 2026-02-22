@@ -3,6 +3,9 @@ $text-secondary: #64748b;
 $accent: #4f46e5;
 $accent-light: #eef2ff;
 
+// ============================================================
+// Base (light theme)
+// ============================================================
 .creation-page {
     min-height: calc(104vh - 72px);
     background: linear-gradient(160deg, #eef2ff 0%, #faf5ff 30%, #f8fafc 60%, #f1f5f9 100%);
@@ -54,4 +57,64 @@ $accent-light: #eef2ff;
     max-width: 760px;
     margin: 0 auto;
     padding: 0 24px;
+}
+
+// ============================================================
+// Dark theme
+// ============================================================
+.theme-dark {
+    background: linear-gradient(160deg, #1a1b20 0%, #23242a 50%, #1a1b20 100%);
+
+    .hero-badge {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+    }
+
+    .hero-title {
+        color: #f1f5f9;
+    }
+
+    .hero-subtitle {
+        color: #94a3b8;
+    }
+}
+
+// ============================================================
+// Christmas theme
+// ============================================================
+.theme-christmas {
+    background: linear-gradient(160deg, #002D24 0%, #0a3a2e 50%, #002D24 100%);
+
+    .hero-badge {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        box-shadow: 0 6px 18px rgba(34, 197, 94, 0.3);
+    }
+
+    .hero-title {
+        color: #a8d5a0;
+    }
+
+    .hero-subtitle {
+        color: #7dba7d;
+    }
+}
+
+// ============================================================
+// Valentines theme
+// ============================================================
+.theme-valentines {
+    background: linear-gradient(160deg, #f5e0dc 0%, #fce7e3 50%, #f0d0ca 100%);
+
+    .hero-badge {
+        background: linear-gradient(135deg, #e11d48, #be123c);
+        box-shadow: 0 6px 18px rgba(225, 29, 72, 0.28);
+    }
+
+    .hero-title {
+        color: #8b3a62;
+    }
+
+    .hero-subtitle {
+        color: #a85a7a;
+    }
 }

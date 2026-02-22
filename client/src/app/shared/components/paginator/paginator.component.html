@@ -3,9 +3,9 @@
         class="filter-dialog-content"
         [ngClass]="{
             'light-mode': this.accountService.theme === 'light',
-            'dark-mode': this.accountService.theme === 'dark',
-            christmas: this.accountService.theme === 'christmas',
-            valentines: this.accountService.theme === 'valentines',
+            'dialog-dark': this.accountService.theme === 'dark',
+            'dialog-christmas': this.accountService.theme === 'christmas',
+            'dialog-valentines': this.accountService.theme === 'valentines',
         }"
     >
         <div class="sort-menu" *ngIf="!inAdminVue">
@@ -50,81 +50,103 @@
     </div>
 </ng-template>
 
-<div class="filter-bar" *ngIf="!inAdminVue">
-    <button class="filter-btn" (click)="openFilterDialog()">
-        <span class="material-icons">tune</span>
-        <span>{{ 'FILTERS.FILTER' | translate }}</span>
-    </button>
-    <div class="active-filter-tag" *ngIf="isFilterApplied() && sortBy">
-        <span class="material-icons tag-icon">label</span>
-        <span class="tag-text" *ngIf="sortBy === 'category'">{{ selectedCategory }}</span>
-        <span class="tag-text" *ngIf="sortBy === 'rating'">{{ 'FILTERS.RATING' | translate }}</span>
-        <button
-            class="tag-close"
-            (click)="clearAllFilters()"
-            matTooltip="{{ 'FILTERS.REMOVE' | translate }}"
-        >
-            <span class="material-icons">close</span>
+<div
+    *ngIf="!inAdminVue"
+    class="paginator-theme-wrapper"
+    [ngClass]="{
+        'theme-dark': this.accountService.theme === 'dark',
+        'theme-christmas': this.accountService.theme === 'christmas',
+        'theme-valentines': this.accountService.theme === 'valentines'
+    }"
+>
+    <div class="filter-bar">
+        <button class="filter-btn" (click)="openFilterDialog()">
+            <span class="material-icons">tune</span>
+            <span>{{ 'FILTERS.FILTER' | translate }}</span>
         </button>
+        <div class="active-filter-tag" *ngIf="isFilterApplied() && sortBy">
+            <span class="material-icons tag-icon">label</span>
+            <span class="tag-text" *ngIf="sortBy === 'category'">{{ selectedCategory }}</span>
+            <span class="tag-text" *ngIf="sortBy === 'rating'">{{ 'FILTERS.RATING' | translate }}</span>
+            <button
+                class="tag-close"
+                (click)="clearAllFilters()"
+                matTooltip="{{ 'FILTERS.REMOVE' | translate }}"
+            >
+                <span class="material-icons">close</span>
+            </button>
+        </div>
     </div>
-</div>
 
-<div class="game-cards" *ngIf="!inAdminVue">
-    <ng-container *ngFor="let filteredGame of dataSource.data">
-        <div
-            class="game-card"
-            *ngIf="filteredGame.game.isVisible"
-            (click)="navigatePreview(filteredGame.game.id)"
-        >
-            <div class="card-accent"></div>
-            <div class="card-body">
-                <div class="card-content">
-                    <h3 class="game-title">{{ filteredGame.game | localizedField:'title' }}</h3>
-                    <p class="game-description" *ngIf="filteredGame.game.description">
-                        {{ filteredGame.game | localizedField:'description' }}
-                    </p>
-                    <div class="game-meta">
-                        <span class="meta-chip" *ngIf="filteredGame.game.questions?.length">
-                            <span class="material-icons">quiz</span>
-                            {{ filteredGame.game.questions.length }}
-                        </span>
-                        <span class="meta-chip" *ngIf="filteredGame.game.duration">
-                            <span class="material-icons">timer</span>
-                            {{ filteredGame.game.duration }}s
-                        </span>
-                        <span class="meta-chip rating-chip" *ngIf="isFilterApplied() && sortBy === 'rating'">
-                            <span class="material-icons">star</span>
-                            {{ filteredGame.weightedRating | number: '1.1-1' }}
-                        </span>
-                        <span class="meta-chip category-chip" *ngIf="isFilterApplied() && sortBy === 'category' && selectedCategory">
-                            {{ filteredGame.categoryDetail }}
-                        </span>
+    <div class="game-cards">
+        <ng-container *ngFor="let filteredGame of dataSource.data">
+            <div
+                class="game-card"
+                *ngIf="filteredGame.game.isVisible"
+                (click)="navigatePreview(filteredGame.game.id)"
+            >
+                <div class="card-accent"></div>
+                <div class="card-body">
+                    <div class="card-content">
+                        <h3 class="game-title">{{ filteredGame.game | localizedField:'title' }}</h3>
+                        <p class="game-description" *ngIf="filteredGame.game.description">
+                            {{ filteredGame.game | localizedField:'description' }}
+                        </p>
+                        <div class="game-meta">
+                            <span class="meta-chip" *ngIf="filteredGame.game.questions?.length">
+                                <span class="material-icons">quiz</span>
+                                {{ filteredGame.game.questions.length }}
+                            </span>
+                            <span class="meta-chip" *ngIf="filteredGame.game.duration">
+                                <span class="material-icons">timer</span>
+                                {{ filteredGame.game.duration }}s
+                            </span>
+                            <span class="meta-chip rating-chip" *ngIf="isFilterApplied() && sortBy === 'rating'">
+                                <span class="material-icons">star</span>
+                                {{ filteredGame.weightedRating | number: '1.1-1' }}
+                            </span>
+                            <span class="meta-chip category-chip" *ngIf="isFilterApplied() && sortBy === 'category' && selectedCategory">
+                                {{ filteredGame.categoryDetail }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-arrow">
+                        <span class="material-icons">chevron_right</span>
                     </div>
                 </div>
-                <div class="card-arrow">
-                    <span class="material-icons">chevron_right</span>
-                </div>
             </div>
-        </div>
-    </ng-container>
+        </ng-container>
 
-    <div class="empty-state" *ngIf="dataSource.data.length === 0">
-        <span class="material-icons empty-icon">sports_esports</span>
-        <p class="empty-title">No games available</p>
-        <p class="empty-subtitle">Check back later or create a new game</p>
+        <div class="empty-state" *ngIf="dataSource.data.length === 0">
+            <span class="material-icons empty-icon">sports_esports</span>
+            <p class="empty-title">No games available</p>
+            <p class="empty-subtitle">Check back later or create a new game</p>
+        </div>
+    </div>
+
+    <div class="paginator-container">
+        <mat-paginator
+            [length]="nbGames"
+            [pageSize]="4"
+            [pageSizeOptions]="[2, 4, 6]"
+            (page)="onPageChange($event)"
+            class="create-paginator"
+        ></mat-paginator>
     </div>
 </div>
 
-<mat-list class="games-container" *ngIf="inAdminVue">
-    <app-game-panel *ngFor="let filteredGame of dataSource.data" [gameDirective]="filteredGame.game"></app-game-panel>
-</mat-list>
+<div *ngIf="inAdminVue">
+    <mat-list class="games-container">
+        <app-game-panel *ngFor="let filteredGame of dataSource.data" [gameDirective]="filteredGame.game"></app-game-panel>
+    </mat-list>
 
-<div class="paginator-container">
-    <mat-paginator
-        [length]="nbGames"
-        [pageSize]="4"
-        [pageSizeOptions]="[2, 4, 6]"
-        (page)="onPageChange($event)"
-        [ngClass]="{ 'admin-paginator': inAdminVue, 'create-paginator': !inAdminVue }"
-    ></mat-paginator>
+    <div class="paginator-container">
+        <mat-paginator
+            [length]="nbGames"
+            [pageSize]="4"
+            [pageSizeOptions]="[2, 4, 6]"
+            (page)="onPageChange($event)"
+            class="admin-paginator"
+        ></mat-paginator>
+    </div>
 </div>
