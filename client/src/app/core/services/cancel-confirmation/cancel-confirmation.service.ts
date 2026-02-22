@@ -21,6 +21,7 @@ export class CancelConfirmationService {
             width: DIALOG.confirmationWidth,
             height: DIALOG.confirmationHeight,
             disableClose: true,
+            panelClass: 'confirmation-dialog-panel',
         });
         this.dialogRef.componentInstance.confirmationService = this;
         this.dialogRef.afterClosed().subscribe(() => {

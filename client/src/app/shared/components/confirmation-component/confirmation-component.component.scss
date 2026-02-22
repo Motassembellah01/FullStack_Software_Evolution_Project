@@ -1,16 +1,145 @@
-.buttons {
-    padding-top: 1em;
+.confirmation-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 36px 28px;
+    text-align: center;
 }
 
-.action-button {
-    font-size: 1.5rem;
-    height: 3rem;
-    transition: transform 0.2s;
-    margin-right: 4rem;
-    margin-left: 3rem;
+.dialog-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8f0fe, #d2e3fc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    .warning-icon {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+        color: #1a73e8;
+    }
 }
 
-h1 {
-    margin-top: 4rem;
-    margin-bottom: 2rem;
+.dialog-title {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    letter-spacing: -0.01em;
+}
+
+.dialog-message {
+    margin: 0 0 28px;
+    font-size: 1rem;
+    color: #6b7280;
+    line-height: 1.5;
+    max-width: 340px;
+
+    &::first-letter {
+        text-transform: uppercase;
+    }
+}
+
+.dialog-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+}
+
+.dialog-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        background 0.2s ease;
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.dialog-btn--cancel {
+    background: linear-gradient(135deg, #1a73e8, #1565c0);
+    color: #fff;
+    box-shadow:
+        0 3px 0 #0d47a1,
+        0 4px 8px rgba(26, 115, 232, 0.3);
+
+    &:hover {
+        background: linear-gradient(135deg, #1565c0, #0d47a1);
+        transform: translateY(-1px);
+        box-shadow:
+            0 4px 0 #0d47a1,
+            0 6px 14px rgba(26, 115, 232, 0.35);
+    }
+
+    &:active {
+        transform: translateY(2px);
+        box-shadow:
+            0 1px 0 #0d47a1,
+            0 2px 4px rgba(26, 115, 232, 0.3);
+    }
+}
+
+.dialog-btn--confirm {
+    background: transparent;
+    color: #9ca3af;
+    border: 1.5px solid #d1d5db;
+    box-shadow: none;
+
+    &:hover {
+        background: #fef2f2;
+        color: #dc2626;
+        border-color: #fca5a5;
+    }
+
+    &:active {
+        background: #fee2e2;
+        transform: translateY(1px);
+    }
+}
+
+:host-context(.dark-mode),
+.dark-mode {
+    .dialog-icon {
+        background: linear-gradient(135deg, #1e3a5f, #1e40af);
+
+        .warning-icon {
+            color: #93c5fd;
+        }
+    }
+
+    .dialog-title {
+        color: #f3f4f6;
+    }
+
+    .dialog-message {
+        color: #9ca3af;
+    }
+
+    .dialog-btn--confirm {
+        color: #6b7280;
+        border-color: #4b5563;
+
+        &:hover {
+            background: rgba(220, 38, 38, 0.1);
+            color: #f87171;
+            border-color: #f87171;
+        }
+    }
 }

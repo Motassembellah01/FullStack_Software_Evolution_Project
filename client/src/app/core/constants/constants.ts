@@ -76,8 +76,8 @@ export const DIALOG = {
     transitionHeight: '18rem',
     endMatchTransitionWidth: '55rem',
     endMatchTransitionHeight: '24rem',
-    confirmationWidth: '40rem',
-    confirmationHeight: '15rem',
+    confirmationWidth: '420px',
+    confirmationHeight: 'auto',
 };
 
 export const DIALOG_MESSAGE_FR = {
