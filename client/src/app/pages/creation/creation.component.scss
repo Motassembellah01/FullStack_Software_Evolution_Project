@@ -1,33 +1,58 @@
-.vue-creation-partie {
-    font-family: sans-serif;
+$text-primary: #0f172a;
+$text-secondary: #64748b;
+$accent: #4f46e5;
+$accent-light: #eef2ff;
 
-    p:nth-child(1) {
-        font-size: 3rem;
-        margin-top: 20px;
+.creation-page {
+    min-height: calc(100vh - 72px);
+    background: linear-gradient(160deg, #eef2ff 0%, #faf5ff 30%, #f8fafc 60%, #f1f5f9 100%);
+    padding-bottom: 80px;
+}
+
+.hero-section {
+    padding: 56px 24px 44px;
+    text-align: center;
+    position: relative;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, $accent, #7c3aed);
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3);
+
+    .material-icons {
+        font-size: 32px;
+        color: #fff;
     }
-
-    p:nth-child(2) {
-        font-size: 2rem;
-        margin-top: 30px;
-        margin-bottom: 30px;
-    }
 }
 
-mat-card {
-    background-color: #afd3f3;
-    margin-top: 20px;
-    width: 30rem;
-    border-radius: 15px;
+.hero-title {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 12px;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
 }
 
-mat-card-content {
-    font-size: 25px;
+.hero-subtitle {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: $text-secondary;
+    margin: 0;
+    letter-spacing: 0.01em;
 }
 
-#home {
-    border: none;
-    margin-right: 2rem;
-    font-size: 1.5rem;
-    left: 68%;
-    top: -19%;
+.games-section {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
 }
