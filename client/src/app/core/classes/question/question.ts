@@ -9,6 +9,7 @@ export class Question implements IQuestion {
     id: string = '';
     type: string = '';
     text: string = '';
+    textEn?: string;
     points: number = 0;
     choices: Choice[] = [];
     timeAllowed: number = 0;
@@ -23,6 +24,7 @@ export class Question implements IQuestion {
             this.id = question.id;
             this.type = question.type;
             this.text = question.text;
+            this.textEn = question.textEn;
             this.points = question.points;
             this.choices = question.choices;
             this.timeAllowed = question.timeAllowed;

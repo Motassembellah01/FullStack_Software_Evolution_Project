@@ -579,4 +579,9 @@ export class SocketHandlerGateway {
     async sendWinnerNameInRoom(accessCode: string, winnerName: string) {
         this.server.to(accessCode).emit<string>(SocketsEmitEvents.SendWinnerName, winnerName);
     }
+
+    async sendMoneyUpdateInRoom(accessCode: string, winnerPlayerName: string) {
+        const arrayIdsAndMoney = await this.accountService.getUserIdAndMoney();
+        this.server.to(accessCode).emit(SocketsEmitEvents.UpdateMoney, { array: arrayIdsAndMoney, winnerPlayerName });
+    }
 }

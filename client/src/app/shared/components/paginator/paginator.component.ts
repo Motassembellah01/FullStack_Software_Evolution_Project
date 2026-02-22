@@ -11,6 +11,7 @@ import { GamePanelComponent } from '@app/shared/components/game-panel/game-panel
 import { AccountService } from '@app/core/http/services/account-service/account.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { LocalizedFieldPipe } from '@app/shared/pipes/localized-field.pipe';
 
 type DetailType = 'difficulties' | 'interests' | 'durations' | 'ratings';
 
@@ -19,7 +20,7 @@ type DetailType = 'difficulties' | 'interests' | 'durations' | 'ratings';
     templateUrl: './paginator.component.html',
     styleUrls: ['./paginator.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, GamePanelComponent, CommonModule, FormsModule, TranslateModule],
+    imports: [AppMaterialModule, GamePanelComponent, CommonModule, FormsModule, TranslateModule, LocalizedFieldPipe],
 })
 export class PaginatorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator) paginator!: MatPaginator;

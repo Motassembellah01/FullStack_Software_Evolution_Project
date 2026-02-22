@@ -173,6 +173,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             this.accountService.isWinnerPlayerName = this.accountService.account.pseudonym === winnerName;
             this.accountService.getAccount().subscribe((account) => {
                 this.accountService.account = account;
+                this.accountService.money = account.money;
             });
         });
 

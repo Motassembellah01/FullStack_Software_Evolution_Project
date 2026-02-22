@@ -10,6 +10,7 @@ export interface IQuestion {
     id: string;
     type: string;
     text: string;
+    textEn?: string;
     points: number;
     choices: Choice[];
     timeAllowed: number;

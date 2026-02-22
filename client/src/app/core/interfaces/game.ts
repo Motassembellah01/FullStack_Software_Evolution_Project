@@ -9,7 +9,9 @@ import { Question } from '@app/core/classes/question/question';
 export interface IGame {
     id: string;
     title: string;
+    titleEn?: string;
     description: string;
+    descriptionEn?: string;
     duration: number;
     lastModification: string;
     questions: Question[];

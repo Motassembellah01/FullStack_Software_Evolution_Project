@@ -65,6 +65,10 @@ export class MatchResultComponent implements OnInit, OnDestroy {
         window.onpopstate = () => {
             this.redirectToHome();
         };
+        this.accountService.getAccount().subscribe((account) => {
+            this.accountService.account = account;
+            this.accountService.money = account.money;
+        });
     }
 
     ngOnDestroy(): void {

@@ -11,6 +11,7 @@ import { MatchPlayerService } from '@app/core/services/match-player-service/matc
 import { QuestionEvaluationService } from '@app/core/services/question-evaluation/question-evaluation.service';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { LocalizedFieldPipe } from '@app/shared/pipes/localized-field.pipe';
 
 /**
  * Component that shows a question and its choices if it'a a QCM, or an input where to enter the answer if it's a QRL.
@@ -26,7 +27,7 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './question-answer.component.html',
     styleUrls: ['./question-answer.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, CommonModule, FormsModule, TranslateModule, FormsModule],
+    imports: [AppMaterialModule, CommonModule, FormsModule, TranslateModule, FormsModule, LocalizedFieldPipe],
 })
 export class QuestionAnswerComponent implements OnInit, OnDestroy {
     @Input() sendEvent: EventEmitter<void>;

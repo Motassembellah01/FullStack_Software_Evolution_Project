@@ -13,7 +13,7 @@
         </p>
     </div>
     <mat-card class="question-container">
-        <mat-card-content>{{ question.text }}</mat-card-content>
+        <mat-card-content>{{ question | localizedField:'text' }}</mat-card-content>
     </mat-card>
 
     <div *ngIf="question.type !== 'QCM' && this.question.image" class="img-container">
@@ -21,7 +21,7 @@
     </div>
     <div class="row align-items-center" *ngFor="let choice of question.choices; index as i">
         <mat-card class="qcm-answer-container">
-            <mat-card-content>{{ i + 1 }}. {{ choice.text }}</mat-card-content>
+            <mat-card-content>{{ i + 1 }}. {{ choice | localizedField:'text' }}</mat-card-content>
         </mat-card>
         <div class="p-20">
             <mat-icon [ngClass]="getAnswerIcon(choice)">{{ getAnswerIcon(choice) }}</mat-icon>

@@ -66,6 +66,7 @@ export class MatchController {
             const matches: CurrentMatchesDto[] = this.matchService.matches.map((match) => ({
                 accessCode: match.accessCode,
                 quizName: match.game.title,
+                quizNameEn: match.game.titleEn,
                 playersCount: match.players.length,
                 observersCount: match.observers.length,
                 hasStarted: match.begin.trim() !== '',
@@ -346,6 +347,7 @@ export class MatchController {
                     this.logger.warn(`No best player found for match with accessCode: ${accessCode}`);
                 }
             }
+            await this.socketHandler.sendMoneyUpdateInRoom(match.accessCode, winnerPlayerName);
             this.socketHandler.sendWinnerNameInRoom(match.accessCode, winnerPlayerName);
             this.socketHandler.leaveAllRoom(accessCode);
             res.status(HttpStatus.OK).json({ winnerPlayerName });

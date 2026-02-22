@@ -16,8 +16,16 @@ export class Game {
     title: string;
 
     @ApiProperty()
+    @Prop()
+    titleEn?: string;
+
+    @ApiProperty()
     @Prop({ required: true })
     description: string;
+
+    @ApiProperty()
+    @Prop()
+    descriptionEn?: string;
 
     @ApiProperty()
     @Prop({ required: true })

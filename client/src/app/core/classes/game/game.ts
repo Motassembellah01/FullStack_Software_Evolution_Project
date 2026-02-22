@@ -11,7 +11,9 @@ import { TranslationService } from '@app/core/services/translate-service/transla
 export class Game implements IGame {
     id: string = '';
     title: string = '';
+    titleEn?: string;
     description: string = '';
+    descriptionEn?: string;
     duration: number = 0;
     lastModification: string = '';
     questions: Question[] = [];
@@ -29,7 +31,9 @@ export class Game implements IGame {
         if (game) {
             this.id = game.id;
             this.title = game.title;
+            this.titleEn = game.titleEn;
             this.description = game.description;
+            this.descriptionEn = game.descriptionEn;
             this.duration = game.duration;
             this.lastModification = game.lastModification;
             this.questions = game.questions;

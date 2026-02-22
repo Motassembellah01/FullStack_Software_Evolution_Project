@@ -1,5 +1,5 @@
 <div class="container">
-    <h2 class="bold">{{ gameDirective.title }}</h2>
+    <h2 class="bold">{{ gameDirective | localizedField:'title' }}</h2>
     <div class="text">
         <p class="italic">{{ 'GAME_PANEL.MODIFICATION_DATE' | translate }}{{ gameDirective.lastModification }}</p>
         <p class="italic">{{ 'GAME_PANEL.CREATOR_NAME' | translate }}{{ creatorName }}</p>

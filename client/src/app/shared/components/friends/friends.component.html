@@ -36,6 +36,14 @@
         </button>
         <button
             class="tab-btn"
+            [class.active]="currentTab === FriendTab.Discover"
+            (click)="switchTab(FriendTab.Discover)"
+        >
+            <mat-icon class="tab-icon">explore</mat-icon>
+            <span class="tab-label">{{ tabLabel.discover }}</span>
+        </button>
+        <button
+            class="tab-btn"
             [class.active]="currentTab === FriendTab.Requests"
             (click)="switchTab(FriendTab.Requests)"
         >
@@ -45,18 +53,11 @@
         </button>
         <button
             class="tab-btn"
-            [class.active]="currentTab === FriendTab.Discover"
-            (click)="switchTab(FriendTab.Discover)"
-        >
-            <mat-icon class="tab-icon">explore</mat-icon>
-            <span class="tab-label">{{ tabLabel.discover }}</span>
-        </button>
-        <button
-            class="tab-btn"
             [class.active]="currentTab === FriendTab.Blocked"
             (click)="switchTab(FriendTab.Blocked)"
         >
             <mat-icon class="tab-icon">block</mat-icon>
+            <span class="tab-label">{{ tabLabel.blocked }}</span>
             <span class="tab-count" *ngIf="blockedCount > 0">{{ blockedCount }}</span>
         </button>
     </div>

@@ -5,6 +5,7 @@ import { AccountService } from '@app/core/http/services/account-service/account.
 import { Choice } from '@app/core/interfaces/choice';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { LocalizedFieldPipe } from '@app/shared/pipes/localized-field.pipe';
 
 /**
  * Component that provides the question and its choices template for the manager
@@ -16,7 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './question-display.component.html',
     styleUrls: ['./question-display.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, CommonModule, TranslateModule],
+    imports: [AppMaterialModule, CommonModule, TranslateModule, LocalizedFieldPipe],
 })
 export class QuestionDisplayComponent {
     @Input() question: Question;

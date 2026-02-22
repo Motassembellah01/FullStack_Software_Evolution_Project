@@ -22,6 +22,7 @@ import { ErrorMessageComponent } from '@app/shared/components/error-message/erro
 import { LoginComponent } from '@app/shared/components/login/login.component';
 import { LogoComponent } from '@app/shared/components/logo/logo.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { LocalizedFieldPipe } from '@app/shared/pipes/localized-field.pipe';
 // import { th } from 'date-fns/locale';
 import { map, forkJoin, firstValueFrom, of} from 'rxjs';
 
@@ -45,7 +46,7 @@ export interface WaitingGames {
     templateUrl: './join-match.component.html',
     styleUrls: ['./join-match.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, LogoComponent, LoginComponent, CommonModule, FormsModule, ErrorMessageComponent, RouterModule, TranslateModule],
+    imports: [AppMaterialModule, LogoComponent, LoginComponent, CommonModule, FormsModule, ErrorMessageComponent, RouterModule, TranslateModule, LocalizedFieldPipe],
 })
 export class JoinMatchComponent implements OnInit {
     accessCodeError: boolean = false;

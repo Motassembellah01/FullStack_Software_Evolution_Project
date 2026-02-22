@@ -17,8 +17,8 @@
             'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
         }"
     >
-        <p id="game-name" class="color-red bold">{{ game.title }}</p>
-        <p id="game-description" class="flex italic content-center">{{ game.description }}</p>
+        <p id="game-name" class="color-red bold">{{ game | localizedField:'title' }}</p>
+        <p id="game-description" class="flex italic content-center">{{ game | localizedField:'description' }}</p>
         <p id="qcmTime" class="color-red">{{ 'GAME_FORM.QCM_TIME' | translate }} {{ game.duration }} s</p>
     </div>
     <div *ngFor="let question of game.questions; let i = index">
@@ -36,7 +36,7 @@
             <mat-icon *ngIf="question.type === 'QRL'" id="qrl-icon">edit_note</mat-icon>
             <mat-icon *ngIf="question.type === 'QRE'" id="qre-icon">compare_arrows</mat-icon>
             <mat-card>
-                <mat-card-content>{{ question.text }}</mat-card-content>
+                <mat-card-content>{{ question | localizedField:'text' }}</mat-card-content>
             </mat-card>
         </div>
     </div>

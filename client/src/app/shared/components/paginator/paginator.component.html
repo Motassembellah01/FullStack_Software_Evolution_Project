@@ -102,7 +102,7 @@
             <mat-card class="pointer" *ngIf="filteredGame.game.isVisible" (click)="navigatePreview(filteredGame.game.id)">
                 <mat-card-content>
                     <div style="display: flex; align-items: center; gap: 15px" id="space-between">
-                        <h1 style="margin: 0">{{ filteredGame.game.title }}</h1>
+                        <h1 style="margin: 0">{{ filteredGame.game | localizedField:'title' }}</h1>
                         <div *ngIf="isFilterApplied() && sortBy" style="display: flex; align-items: center; gap: 10px">
                             <p *ngIf="sortBy === 'category' && selectedCategory" style="margin: 0">
                                 {{ filteredGame.categoryDetail }}

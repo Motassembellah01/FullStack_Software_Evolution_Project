@@ -19,13 +19,14 @@ import { LogoComponent } from '@app/shared/components/logo/logo.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subscription, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { LocalizedFieldPipe } from '@app/shared/pipes/localized-field.pipe';
 
 @Component({
     selector: 'app-game-preview',
     templateUrl: './game-preview.component.html',
     styleUrls: ['./game-preview.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, LogoComponent, CommonModule, RouterModule, TranslateModule, FormsModule],
+    imports: [AppMaterialModule, LogoComponent, CommonModule, RouterModule, TranslateModule, FormsModule, LocalizedFieldPipe],
 })
 
 /**

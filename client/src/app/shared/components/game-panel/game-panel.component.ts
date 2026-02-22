@@ -9,6 +9,7 @@ import { CancelConfirmationService } from '@app/core/services/cancel-confirmatio
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AlertDialogComponent } from '@app/shared/alert-dialog/alert-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LocalizedFieldPipe } from '@app/shared/pipes/localized-field.pipe';
 
 /**
  * The `GamePanelComponent` represents a user interface component that displays and manages individual game panels
@@ -24,7 +25,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     templateUrl: './game-panel.component.html',
     styleUrls: ['./game-panel.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, CommonModule, TranslateModule],
+    imports: [AppMaterialModule, CommonModule, TranslateModule, LocalizedFieldPipe],
 })
 export class GamePanelComponent implements OnInit {
     @Input() gameDirective: Game;
@@ -43,9 +44,18 @@ export class GamePanelComponent implements OnInit {
 
     ngOnInit(): void {
         this.isVisible = this.gameDirective.isVisible;
-        this.accountService.getAccount(this.gameDirective.creator).subscribe((account) => {
-            this.creatorName = account.pseudonym;
-        })
+        if (this.gameDirective.creator === 'system') {
+            this.creatorName = 'System';
+            return;
+        }
+        this.accountService.getAccount(this.gameDirective.creator).subscribe({
+            next: (account) => {
+                this.creatorName = account.pseudonym;
+            },
+            error: () => {
+                this.creatorName = this.gameDirective.creator;
+            },
+        });
     }
 
     toggleVisibility(): void {

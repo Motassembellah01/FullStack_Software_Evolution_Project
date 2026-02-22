@@ -4,5 +4,6 @@
  */
 export interface Choice {
     text: string;
+    textEn?: string;
     isCorrect: boolean;
 }

@@ -48,7 +48,7 @@
                                     <span>
                                         <img width="35" height="35" src="https://img.icons8.com/ios/50/survey.png" alt="survey" />
                                     </span>
-                                    <span class="value">{{ game.quizName }}</span>
+                                    <span class="value">{{ game | localizedField:'quizName' }}</span>
                                 </div>
                                 <div *ngIf="game.isPricedMatch" class="game-detail">
                                     <span class="icon" class="material-icons">attach_money</span>
@@ -100,7 +100,7 @@
                                 <span>
                                     <img width="35" height="35" src="https://img.icons8.com/ios/50/survey.png" alt="survey" />
                                 </span>
-                                <span class="value">{{ game.quizName }}</span>
+                                <span class="value">{{ game | localizedField:'quizName' }}</span>
                             </div>
                             <div class="game-detail">
                                 <button mat-icon-button (click)="joinAsObserver(game.accessCode)">
