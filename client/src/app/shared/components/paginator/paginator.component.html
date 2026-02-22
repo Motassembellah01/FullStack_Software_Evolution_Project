@@ -123,7 +123,7 @@
     <mat-paginator
         [length]="nbGames"
         [pageSize]="4"
-        [pageSizeOptions]="[2, 4, 6, 8, 12]"
+        [pageSizeOptions]="[2, 4, 6]"
         (page)="onPageChange($event)"
         [ngClass]="{ 'admin-paginator': inAdminVue, 'create-paginator': !inAdminVue }"
     ></mat-paginator>

@@ -12,8 +12,7 @@ $border-light: #f1f5f9;
 $shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
 $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
-$radius-md: 14px;
-$radius-lg: 18px;
+$radius-md: 12px;
 
 $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 
@@ -23,28 +22,28 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 .filter-bar {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 28px;
+    gap: 10px;
+    margin-bottom: 16px;
 }
 
 .filter-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 22px;
+    gap: 6px;
+    padding: 7px 18px;
     border: 1.5px solid $border;
-    border-radius: 12px;
+    border-radius: 10px;
     background: $surface;
     color: $text-secondary;
     font-family: 'Quicksand', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.84rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: $shadow-sm;
 
     .material-icons {
-        font-size: 20px;
+        font-size: 18px;
     }
 
     &:hover {
@@ -59,21 +58,21 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 .active-filter-tag {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 10px 6px 14px;
+    gap: 5px;
+    padding: 5px 8px 5px 12px;
     border-radius: 100px;
     background: $primary-light;
     border: 1.5px solid rgba($primary, 0.2);
     animation: tagAppear 0.3s ease-out;
 
     .tag-icon {
-        font-size: 16px;
+        font-size: 14px;
         color: $primary;
     }
 
     .tag-text {
         font-family: 'Quicksand', sans-serif;
-        font-size: 0.82rem;
+        font-size: 0.78rem;
         font-weight: 600;
         color: $primary;
     }
@@ -82,8 +81,8 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
         border: none;
         border-radius: 50%;
         background: rgba($primary, 0.12);
@@ -93,7 +92,7 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
         transition: background 0.15s;
 
         .material-icons {
-            font-size: 14px;
+            font-size: 13px;
         }
 
         &:hover {
@@ -108,7 +107,7 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 .game-cards {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
 }
 
 .game-card {
@@ -141,7 +140,7 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
     }
 
     &:hover {
-        transform: translateY(-3px);
+        transform: translateY(-2px);
         box-shadow: $shadow-lg;
         border-color: transparent;
 
@@ -172,8 +171,8 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 24px;
-    gap: 16px;
+    padding: 14px 20px;
+    gap: 12px;
     min-width: 0;
 }
 
@@ -185,19 +184,19 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 .game-title {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.02rem;
     color: $text-primary;
-    margin: 0 0 4px;
+    margin: 0;
     line-height: 1.35;
 }
 
 .game-description {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: $text-muted;
-    margin: 0 0 12px;
-    line-height: 1.55;
+    margin: 4px 0 0;
+    line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -205,24 +204,25 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 .game-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
+    margin-top: 6px;
 }
 
 .meta-chip {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 3px 10px;
+    gap: 3px;
+    padding: 2px 8px;
     border-radius: 100px;
     font-family: 'Quicksand', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: $text-muted;
     background: $border-light;
 
     .material-icons {
-        font-size: 14px;
+        font-size: 13px;
     }
 }
 
@@ -248,7 +248,7 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
     flex-shrink: 0;
 
     .material-icons {
-        font-size: 24px;
+        font-size: 22px;
     }
 }
 
@@ -257,26 +257,26 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 // ============================================================
 .empty-state {
     text-align: center;
-    padding: 64px 24px;
+    padding: 48px 24px;
 }
 
 .empty-icon {
-    font-size: 56px;
+    font-size: 48px;
     color: #cbd5e1;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     display: block;
 }
 
 .empty-title {
     font-family: 'Quicksand', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: $text-primary;
-    margin: 0 0 6px;
+    margin: 0 0 4px;
 }
 
 .empty-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: $text-muted;
     margin: 0;
 }
@@ -287,12 +287,12 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 .paginator-container {
     display: flex;
     justify-content: center;
-    margin-top: 32px;
+    margin-top: 20px;
 }
 
 .create-paginator {
     background: $surface !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     box-shadow: $shadow-sm !important;
     border: 1px solid $border-light !important;
     width: auto;
@@ -429,7 +429,7 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 @keyframes cardSlideIn {
     from {
         opacity: 0;
-        transform: translateY(16px);
+        transform: translateY(12px);
     }
     to {
         opacity: 1;
@@ -453,19 +453,19 @@ $card-accents: (#4f46e5, #7c3aed, #0891b2, #059669, #d97706, #e11d48);
 // ============================================================
 @media (max-width: 600px) {
     .card-body {
-        padding: 16px 18px;
+        padding: 12px 16px;
     }
 
     .game-title {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .game-description {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
 
     .filter-btn {
-        padding: 8px 16px;
-        font-size: 0.85rem;
+        padding: 6px 14px;
+        font-size: 0.8rem;
     }
 }
