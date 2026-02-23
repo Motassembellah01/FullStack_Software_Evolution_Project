@@ -1,5 +1,17 @@
-<div class="container relative" id="space-between">
-    <img [src]="playerAvatarUrl">
-    <h2 class="bold aligned-element">{{ player.name }}</h2>
-    <i *ngIf="isManager" class="material-icons pointer aligned-element relative" (click)="excludePlayer()">block</i>
+<div class="pc-card" [class.pc-loading]="!playerAvatarUrl">
+    <div class="pc-avatar-ring">
+        <div class="pc-avatar">
+            <img *ngIf="playerAvatarUrl" [src]="playerAvatarUrl" alt="{{ player.name }}" />
+            <div *ngIf="!playerAvatarUrl" class="pc-avatar-placeholder">
+                <i class="material-icons">person</i>
+            </div>
+        </div>
+        <span class="pc-status-dot"></span>
+    </div>
+    <div class="pc-info">
+        <span class="pc-name">{{ player.name }}</span>
+    </div>
+    <button *ngIf="isManager" class="pc-kick-btn" (click)="excludePlayer()" title="Remove player">
+        <i class="material-icons">person_remove</i>
+    </button>
 </div>

@@ -42,10 +42,16 @@ import { timer } from 'rxjs';
 export class ManagerWaitingRoomComponent implements OnInit, OnDestroy {
     waitingRoomIsLocked: boolean = false;
     accessCode: string = this.matchSrv.match.accessCode;
+    accessCodeDigits: string[] = this.matchSrv.match.accessCode.split('');
     nextQuestionButtonText = 'Prochaine question';
     dialogRef: MatDialogRef<TransitionDialogComponent>;
     isCopied: boolean = false;
     ONE_SECOND_DELAY: number = 1000;
+    particles = Array.from({ length: 30 }, () => ({
+        x: Math.random() * 100,
+        delay: Math.random() * 6,
+        duration: 6 + Math.random() * 6,
+    }));
     // eslint-disable-next-line max-params
     constructor(
         public matchSrv: MatchPlayerService,

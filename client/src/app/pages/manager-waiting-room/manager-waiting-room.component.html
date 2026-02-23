@@ -1,80 +1,152 @@
-<app-logo></app-logo>
-<div class="page">
-    <nav class="absolute">
-        <button mat-raised-button class="nav-button background-red" (click)="cancelGame()">{{ 'BUTTONS.CANCEL' | translate }}</button>
-        <button mat-raised-button class="nav-button background-beige" (click)="onLockWaitingRoom()">
-            {{ getTranslationLock() | translate }}
-        </button>
-        <div class="text-area">
-            <span *ngIf="!matchSrv.match.players.length" class="text-hover">{{ 'TITLES.INVITE_PLAYERS' | translate }}</span>
-            <span
-                *ngIf="matchSrv.match.players.length && isMinPlayersConditionValid() && areAllTeamsValid() && !this.waitingRoomIsLocked"
-                class="text-hover"
-                >{{ 'TITLES.LOCK_MATCH' | translate }}</span
-            >
-            <span *ngIf="matchSrv.match.players.length && !isMinPlayersConditionValid()" class="text-hover">{{
-                'TITLES.MIN_TEAM_PLAYERS' | translate
-            }}</span>
-            <span *ngIf="isMinPlayersConditionValid() && !areAllTeamsValid()" class="text-hover">{{ 'TITLES.VALID_TEAMS' | translate }}</span>
-
-            <button
-                class="nav-button background-green start"
-                mat-raised-button
-                (click)="onBeginMatch()"
-                [disabled]="!matchSrv.match.players.length || !this.waitingRoomIsLocked || !isMinPlayersConditionValid() || !areAllTeamsValid()"
-            >
-                {{ 'NAV_BUTTONS.START_MATCH' | translate }}
-            </button>
-        </div>
-    </nav>
-    <h1
-        class="bold title access-code"
-        [ngClass]="{
-            'color-blue': this.accountService.theme === 'light' || this.accountService.theme === 'valentines',
-            'color-brown': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-        }"
-    >
-        {{ 'JOIN_MATCH.ACCESS_CODE' | translate }}: {{ accessCode }}
-        <button id="copy" [cdkCopyToClipboard]="accessCode" (click)="copyCode()">
-            <mat-icon *ngIf="!isCopied">content_copy</mat-icon>
-            <mat-icon *ngIf="isCopied">done</mat-icon>
-        </button>
-    </h1>
-</div>
-
-<h3 class="players-title">{{ 'TITLES.PLAYERS_CONNECTED' | translate }}</h3>
-<div *ngIf="!matchSrv.match.isTeamMatch">
-    <div class="players-solo-container">
-        <app-player-card
-            *ngFor="let player of matchSrv.getPlayersNotInTeam()"
-            [player]="player"
-            [isManager]="true"
-            [accessCode]="accessCode"
-        ></app-player-card>
+<div class="mwr-backdrop">
+    <div class="mwr-particles">
+        <span *ngFor="let p of particles" class="particle" [style.left]="p.x + '%'" [style.animationDelay]="p.delay + 's'" [style.animationDuration]="p.duration + 's'"></span>
     </div>
-</div>
-<div class="flex-container" *ngIf="matchSrv.match.isTeamMatch">
-    <div class="layout-container flex-child">
-        <div class="players-container">
-            <app-player-card
-                *ngFor="let player of matchSrv.getPlayersNotInTeam()"
-                [player]="player"
-                [isManager]="true"
-                [accessCode]="accessCode"
-            ></app-player-card>
-        </div>
-    </div>
-    <div class="teams-container flex-child">
-        <div *ngFor="let team of matchSrv.match.teams" class="team-card">
-            <h4 class="team-name">{{ team.name }}</h4>
-            <div class="team-players">
-                <app-player-card
-                    *ngFor="let player of team.players"
-                    [player]="{ name: player, isActive: true, score: 0, nBonusObtained: 0, chatBlocked: false, avatar: player }"
-                    [isManager]="true"
-                    [accessCode]="accessCode"
-                ></app-player-card>
+
+    <div class="mwr-container">
+        <!-- Top Bar -->
+        <header class="mwr-header">
+            <div class="mwr-header-left">
+                <button class="mwr-btn mwr-btn-cancel" (click)="cancelGame()">
+                    <i class="material-icons">close</i>
+                    <span>{{ 'BUTTONS.CANCEL' | translate }}</span>
+                </button>
+            </div>
+            <div class="mwr-header-center">
+                <div class="mwr-access-code-card">
+                    <span class="mwr-code-label">{{ 'JOIN_MATCH.ACCESS_CODE' | translate }}</span>
+                    <div class="mwr-code-value-row">
+                        <span class="mwr-code-value">
+                            <span *ngFor="let digit of accessCodeDigits; let i = index"
+                                  class="mwr-digit"
+                                  [style.animationDelay]="(i * 0.08) + 's'">{{ digit }}</span>
+                        </span>
+                        <button class="mwr-copy-btn" [cdkCopyToClipboard]="accessCode" (click)="copyCode()" [class.copied]="isCopied">
+                            <i class="material-icons">{{ isCopied ? 'check_circle' : 'content_copy' }}</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mwr-header-right">
+                <button class="mwr-btn mwr-btn-lock" [class.locked]="waitingRoomIsLocked" (click)="onLockWaitingRoom()">
+                    <i class="material-icons">{{ waitingRoomIsLocked ? 'lock' : 'lock_open' }}</i>
+                    <span>{{ getTranslationLock() | translate }}</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Status Hints -->
+        <div class="mwr-status-strip">
+            <div class="mwr-status-hint" *ngIf="!matchSrv.match.players.length">
+                <i class="material-icons pulse-icon">person_add</i>
+                <span>{{ 'TITLES.INVITE_PLAYERS' | translate }}</span>
+            </div>
+            <div class="mwr-status-hint"
+                 *ngIf="matchSrv.match.players.length && isMinPlayersConditionValid() && areAllTeamsValid() && !waitingRoomIsLocked">
+                <i class="material-icons pulse-icon">lock_outline</i>
+                <span>{{ 'TITLES.LOCK_MATCH' | translate }}</span>
+            </div>
+            <div class="mwr-status-hint warning" *ngIf="matchSrv.match.players.length && !isMinPlayersConditionValid()">
+                <i class="material-icons">warning_amber</i>
+                <span>{{ 'TITLES.MIN_TEAM_PLAYERS' | translate }}</span>
+            </div>
+            <div class="mwr-status-hint warning" *ngIf="isMinPlayersConditionValid() && !areAllTeamsValid()">
+                <i class="material-icons">warning_amber</i>
+                <span>{{ 'TITLES.VALID_TEAMS' | translate }}</span>
             </div>
         </div>
+
+        <!-- Main Content -->
+        <main class="mwr-main">
+            <!-- Players Section (Solo) -->
+            <section class="mwr-players-section" *ngIf="!matchSrv.match.isTeamMatch">
+                <div class="mwr-section-header">
+                    <i class="material-icons">groups</i>
+                    <h2>{{ 'TITLES.PLAYERS_CONNECTED' | translate }}</h2>
+                    <span class="mwr-player-count">{{ matchSrv.match.players.length }}</span>
+                </div>
+                <div class="mwr-players-grid" [class.empty]="!matchSrv.match.players.length">
+                    <div *ngIf="!matchSrv.match.players.length" class="mwr-empty-state">
+                        <div class="mwr-empty-icon-wrapper">
+                            <i class="material-icons">hourglass_empty</i>
+                        </div>
+                        <p>{{ 'TITLES.INVITE_PLAYERS' | translate }}</p>
+                    </div>
+                    <app-player-card
+                        *ngFor="let player of matchSrv.getPlayersNotInTeam(); let i = index"
+                        [player]="player"
+                        [isManager]="true"
+                        [accessCode]="accessCode"
+                        [style.animationDelay]="(i * 0.06) + 's'"
+                        class="mwr-player-card-enter"
+                    ></app-player-card>
+                </div>
+            </section>
+
+            <!-- Team Mode -->
+            <div class="mwr-team-layout" *ngIf="matchSrv.match.isTeamMatch">
+                <section class="mwr-unassigned-section">
+                    <div class="mwr-section-header">
+                        <i class="material-icons">person_outline</i>
+                        <h2>Unassigned</h2>
+                        <span class="mwr-player-count">{{ matchSrv.getPlayersNotInTeam().length }}</span>
+                    </div>
+                    <div class="mwr-unassigned-players">
+                        <app-player-card
+                            *ngFor="let player of matchSrv.getPlayersNotInTeam(); let i = index"
+                            [player]="player"
+                            [isManager]="true"
+                            [accessCode]="accessCode"
+                            [style.animationDelay]="(i * 0.06) + 's'"
+                            class="mwr-player-card-enter"
+                        ></app-player-card>
+                    </div>
+                </section>
+                <section class="mwr-teams-section">
+                    <div class="mwr-section-header">
+                        <i class="material-icons">groups</i>
+                        <h2>Teams</h2>
+                        <span class="mwr-player-count">{{ matchSrv.match.teams.length }}</span>
+                    </div>
+                    <div class="mwr-teams-grid">
+                        <div *ngFor="let team of matchSrv.match.teams; let i = index"
+                             class="mwr-team-card"
+                             [style.animationDelay]="(i * 0.1) + 's'">
+                            <div class="mwr-team-card-header">
+                                <i class="material-icons">shield</i>
+                                <h3>{{ team.name }}</h3>
+                                <span class="mwr-team-member-count">{{ team.players.length }}/2</span>
+                            </div>
+                            <div class="mwr-team-players">
+                                <app-player-card
+                                    *ngFor="let player of team.players"
+                                    [player]="{ name: player, isActive: true, score: 0, nBonusObtained: 0, chatBlocked: false, avatar: player }"
+                                    [isManager]="true"
+                                    [accessCode]="accessCode"
+                                ></app-player-card>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Start Button (Floating) -->
+        <div class="mwr-start-zone">
+            <button
+                class="mwr-start-btn"
+                (click)="onBeginMatch()"
+                [disabled]="!matchSrv.match.players.length || !waitingRoomIsLocked || !isMinPlayersConditionValid() || !areAllTeamsValid()"
+                [class.ready]="matchSrv.match.players.length && waitingRoomIsLocked && isMinPlayersConditionValid() && areAllTeamsValid()"
+            >
+                <span class="mwr-start-btn-bg"></span>
+                <span class="mwr-start-btn-content">
+                    <i class="material-icons">play_arrow</i>
+                    <span>{{ 'NAV_BUTTONS.START_MATCH' | translate }}</span>
+                </span>
+            </button>
+        </div>
     </div>
 </div>
+
+<app-logo></app-logo>
