@@ -23,7 +23,6 @@ import { DialogTransitionService } from '@app/core/services/dialog-transition-se
 import { MatchPlayerService } from '@app/core/services/match-player-service/match-player.service';
 import { ListenerManagerService } from '@app/core/websocket/services/listener-manager/listener-manager.service';
 import { SocketService } from '@app/core/websocket/services/socket-service/socket.service';
-// import { SocketService } from '@app/core/websocket/services/socket-service/socket.service';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AlertDialogComponent } from '@app/shared/alert-dialog/alert-dialog.component';
 import { LogoComponent } from '@app/shared/components/logo/logo.component';
@@ -49,6 +48,12 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     errorMessage: string = '';
     isCreatingTeam: boolean = false;
     newTeamName: string = '';
+    particles = Array.from({ length: 24 }, () => ({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        delay: Math.random() * 4,
+        duration: 8 + Math.random() * 8,
+    }));
 
     // eslint-disable-next-line max-params
     constructor(
@@ -91,6 +96,15 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         });
     }
 
+    leaveWaitingRoomWithoutConfirmation(): void {
+        this.abandonGameWithoutConfirmation();
+        this.transitionDialogService.closeTransitionDialog();
+        this.matchSrv.cleanMatchListeners();
+        this.matchSrv.cleanCurrentMatch();
+        this.matchSrv.router.navigateByUrl('/home');
+        this.accountService.isInGame = false;
+    }
+
     abandonGame(): void {
         let dialogMessage;
         if (this.translateService.currentLang === 'fr') {
@@ -99,7 +113,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             dialogMessage = DIALOG_MESSAGE_EN.quitMatch;
         }
 
-        this.confirmationService.askConfirmation(this.abandonGameWithoutConfirmation.bind(this), dialogMessage);
+        this.confirmationService.askConfirmation(this.leaveWaitingRoomWithoutConfirmation.bind(this), dialogMessage);
     }
 
     connect(): void {
@@ -220,6 +234,14 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         return this.matchSrv.match.teams.find(team =>
             team.players.some(player => player === this.accountService.account.pseudonym)
         )?.name;
+    }
+
+    get connectedPlayersCount(): number {
+        return this.matchSrv.match.players.length;
+    }
+
+    get teamsCount(): number {
+        return this.matchSrv.match.teams?.length ?? 0;
     }
 
 

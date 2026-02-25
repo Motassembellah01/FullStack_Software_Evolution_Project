@@ -1,52 +1,116 @@
 <app-logo></app-logo>
-<button mat-raised-button class="background-red quit" (click)="abandonGame()">{{ 'BUTTONS.ABANDON' | translate }}</button>
-<h1
-    class="bold title flex-center"
-    [ngClass]="{
-        'color-blue': this.accountService.theme === 'light' || this.accountService.theme === 'valentines',
-        'color-brown': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-    }"
->
-    {{ 'TITLES.WAITING_ROOM' | translate }}
-</h1>
-
-<div *ngIf="!matchSrv.match.isTeamMatch">
-    <h3 class="players-title">{{ 'TITLES.PLAYERS_CONNECTED' | translate }}</h3>
-    <div class="player-solo-container">
-        <app-player-card *ngFor="let player of this.matchSrv.match.players" [player]="player"></app-player-card>
+<div class="wr-scene">
+    <div class="wr-orb wr-orb-1"></div>
+    <div class="wr-orb wr-orb-2"></div>
+    <div class="wr-particles">
+        <span
+            *ngFor="let p of particles"
+            class="particle"
+            [style.left]="p.x + '%'"
+            [style.top]="p.y + '%'"
+            [style.animationDelay]="p.delay + 's'"
+            [style.animationDuration]="p.duration + 's'"
+        ></span>
     </div>
-</div>
 
-<div *ngIf="matchSrv.match.isTeamMatch">
-    <div class="flex-container">
-        <div class="flex-child">
-            <h3 class="players-title">{{ 'TITLES.PLAYERS_CONNECTED' | translate }}</h3>
-            <div class="players-container">
-                <app-player-card *ngFor="let player of this.matchSrv.getPlayersNotInTeam()" [player]="player"></app-player-card>
+    <div class="wr-shell">
+        <div class="wr-topbar">
+            <div class="wr-title-wrap">
+                <span class="wr-badge">{{ 'JOIN_MATCH.WAITING_ROOM' | translate }}</span>
+                <h1>{{ 'TITLES.WAITING_ROOM' | translate }}</h1>
+                <p>{{ 'TITLES.INVITE_PLAYERS' | translate }}</p>
             </div>
+            <button class="wr-quit-btn" type="button" (click)="abandonGame()">
+                <i class="material-icons">exit_to_app</i>
+                <span>{{ 'BUTTONS.ABANDON' | translate }}</span>
+            </button>
         </div>
-        <div class="teams-container flex-child">
-            <div *ngFor="let team of matchSrv.match.teams" class="team">
-                <h4 class="team-name">{{ team.name }}</h4>
-                <button mat-button color="primary" (click)="joinTeam(team.name)" *ngIf="getCurrentPlayerTeam() !== team.name">
-                    {{ 'JOIN_MATCH.JOIN' | translate }}
-                </button>
-                <button mat-button color="warn" (click)="leaveTeam(team.name)" *ngIf="getCurrentPlayerTeam() === team.name">
-                    {{ 'NAV_BUTTONS.QUIT' | translate }}
-                </button>
-                <div class="players-container">
-                    <app-player-card
-                        *ngFor="let player of team.players"
-                        [player]="{ name: player, isActive: true, score: 0, nBonusObtained: 0, chatBlocked: false, avatar: player }"
-                    >
-                    </app-player-card>
+
+        <section class="wr-stats-grid">
+            <article class="wr-stat-card">
+                <i class="material-icons">groups</i>
+                <span class="wr-stat-value">{{ connectedPlayersCount }}</span>
+                <span class="wr-stat-label">{{ 'TITLES.PLAYERS_CONNECTED' | translate }}</span>
+            </article>
+            <article class="wr-stat-card" *ngIf="matchSrv.match.isTeamMatch">
+                <i class="material-icons">shield</i>
+                <span class="wr-stat-value">{{ teamsCount }}</span>
+                <span class="wr-stat-label">{{ 'TITLES.CREATE_TEAM' | translate }}</span>
+            </article>
+            <article class="wr-stat-card" *ngIf="matchSrv.match.isTeamMatch">
+                <i class="material-icons">person_outline</i>
+                <span class="wr-stat-value">{{ matchSrv.getPlayersNotInTeam().length }}</span>
+                <span class="wr-stat-label">{{ 'TITLES.PLAYERS' | translate }}</span>
+            </article>
+        </section>
+
+        <section class="wr-panel" *ngIf="!matchSrv.match.isTeamMatch">
+            <div class="wr-panel-title">
+                <i class="material-icons">wifi_tethering</i>
+                <span>{{ 'TITLES.PLAYERS_CONNECTED' | translate }}</span>
+            </div>
+            <div class="wr-empty-state" *ngIf="!connectedPlayersCount">
+                <div class="wr-radar">
+                    <div class="wr-radar-sweep"></div>
+                    <div class="wr-radar-center"></div>
+                </div>
+                <span>{{ 'TITLES.INVITE_PLAYERS' | translate }}</span>
+            </div>
+            <div class="wr-players-grid" *ngIf="connectedPlayersCount">
+                <app-player-card *ngFor="let player of matchSrv.match.players" [player]="player"></app-player-card>
+            </div>
+        </section>
+
+        <section class="wr-team-layout" *ngIf="matchSrv.match.isTeamMatch">
+            <div class="wr-panel">
+                <div class="wr-panel-title">
+                    <i class="material-icons">person_outline</i>
+                    <span>{{ 'TITLES.PLAYERS_CONNECTED' | translate }}</span>
+                </div>
+                <div class="wr-players-grid">
+                    <app-player-card *ngFor="let player of matchSrv.getPlayersNotInTeam()" [player]="player"></app-player-card>
                 </div>
             </div>
-        </div>
+
+            <div class="wr-panel">
+                <div class="wr-panel-headline">
+                    <div class="wr-panel-title">
+                        <i class="material-icons">groups</i>
+                        <span>{{ 'TITLES.CREATE_TEAM' | translate }}</span>
+                    </div>
+                    <button class="wr-create-btn" type="button" (click)="openTeamCreationDialog()">
+                        <i class="material-icons">add</i>
+                        <span>{{ 'TITLES.CREATE_TEAM' | translate }}</span>
+                    </button>
+                </div>
+
+                <div class="wr-teams-grid">
+                    <article *ngFor="let team of matchSrv.match.teams" class="wr-team-card">
+                        <div class="wr-team-header">
+                            <h4>{{ team.name }}</h4>
+                            <span>{{ team.players.length }}/2</span>
+                        </div>
+                        <div class="wr-team-actions">
+                            <button mat-stroked-button color="primary" (click)="joinTeam(team.name)" *ngIf="getCurrentPlayerTeam() !== team.name">
+                                {{ 'JOIN_MATCH.JOIN' | translate }}
+                            </button>
+                            <button mat-stroked-button color="warn" (click)="leaveTeam(team.name)" *ngIf="getCurrentPlayerTeam() === team.name">
+                                {{ 'NAV_BUTTONS.QUIT' | translate }}
+                            </button>
+                        </div>
+                        <div class="wr-team-players">
+                            <app-player-card
+                                *ngFor="let player of team.players"
+                                [player]="{ name: player, isActive: true, score: 0, nBonusObtained: 0, chatBlocked: false, avatar: player }"
+                            >
+                            </app-player-card>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
     </div>
-    <div class="create-team">
-        <button mat-raised-button color="primary" (click)="openTeamCreationDialog()">{{ 'TITLES.CREATE_TEAM' | translate }}</button>
-    </div>
+
     <div class="overlay" *ngIf="isCreatingTeam">
         <div class="team-creation-popup">
             <h2>{{ 'TITLES.CREATE_NEW_TEAM' | translate }}</h2>
