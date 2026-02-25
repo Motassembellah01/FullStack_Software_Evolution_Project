@@ -7,8 +7,9 @@ $accent-light: #eef2ff;
 // Base (light theme)
 // ============================================================
 .creation-page {
-    min-height: calc(104vh - 72px);
+    min-height: 100vh;
     background: linear-gradient(160deg, #eef2ff 0%, #faf5ff 30%, #f8fafc 60%, #f1f5f9 100%);
+    padding-top: 75px;
     padding-bottom: 24px;
 }
 

@@ -15,8 +15,9 @@ $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
 // Page
 // ============================================================
 .admin-page {
-    min-height: calc(104vh - 72px);
+    min-height: 100vh;
     background: linear-gradient(160deg, #eef2ff 0%, #faf5ff 30%, #f8fafc 60%, #f1f5f9 100%);
+    padding-top: 75px;
     padding-bottom: 40px;
 }
 

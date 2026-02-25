@@ -7,7 +7,7 @@
 <app-header class="header" *ngIf="this.showHeader && this.accountService.account && this.accountService.account.avatarUrl"> </app-header>
 <div class="pages"
     [style.paddingRight.px]="isSectionOpen ? 350 : 0"
-    [style.paddingTop.px]="isHeaderVisible && showBackground ? 75 : 0"
+    [style.paddingTop.px]="isHeaderVisible && shouldApplyHeaderOffset ? 75 : 0"
     [ngClass]="{
         'light-mode': this.accountService.theme === 'light' && this.showBackground,
         'dark-mode': this.accountService.theme === 'dark' && this.showBackground,

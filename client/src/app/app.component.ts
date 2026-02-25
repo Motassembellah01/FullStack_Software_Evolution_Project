@@ -42,6 +42,12 @@ export class AppComponent implements OnInit {
         );
     }
 
+    get shouldApplyHeaderOffset(): boolean {
+        const currentUrl = this.router.url;
+        const seamlessRoutes = ['/home', '/login-fail', '/create'];
+        return !seamlessRoutes.includes(currentUrl) && !currentUrl.startsWith('/administration');
+    }
+
     ngOnInit(): void {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const isChat: boolean = (window as any).chatAPI?.isChatProcess();
