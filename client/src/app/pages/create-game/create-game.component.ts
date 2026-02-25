@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -5,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Game } from '@app/core/classes/game/game';
 import { DIALOG_MESSAGE_EN, DIALOG_MESSAGE_FR, SNACKBAR_DURATION, SNACKBAR_MESSAGE_EN, SNACKBAR_MESSAGE_FR } from '@app/core/constants/constants';
 import { GameServiceService } from '@app/core/http/services/game-service/game-service.service';
+import { AccountService } from '@app/core/http/services/account-service/account.service';
 import { CancelConfirmationService } from '@app/core/services/cancel-confirmation/cancel-confirmation.service';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AlertDialogComponent } from '@app/shared/alert-dialog/alert-dialog.component';
@@ -17,7 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     templateUrl: './create-game.component.html',
     styleUrls: ['./create-game.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, LogoComponent, GameFormComponent, TranslateModule],
+    imports: [CommonModule, AppMaterialModule, LogoComponent, GameFormComponent, TranslateModule],
 })
 
 /**
@@ -34,7 +36,8 @@ export class CreateGameComponent implements OnInit {
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
         private translateService: TranslateService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public accountService: AccountService
     ) {}
 
     ngOnInit(): void {

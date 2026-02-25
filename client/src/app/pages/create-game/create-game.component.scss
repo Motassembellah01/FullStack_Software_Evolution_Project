@@ -1,9 +1,131 @@
-.action-button {
-    font-size: 1.5rem;
-    height: 3rem;
-    transition: transform 0.2s;
+.create-game-page {
+    --surface-main: rgba(255, 255, 255, 0.86);
+    --surface-elevated: rgba(255, 255, 255, 0.96);
+    --text-primary: #122f46;
+    --text-muted: #546c80;
+    --border-soft: rgba(18, 47, 70, 0.14);
+    --shadow-soft: 0 14px 34px rgba(13, 34, 52, 0.12);
+    --shadow-strong: 0 14px 28px rgba(19, 68, 102, 0.26);
+    --danger-bg: linear-gradient(135deg, #ef476f, #ff6f91);
+    --success-bg: linear-gradient(135deg, #06c270, #0abf9c);
+    --focus-ring: #3ba1de;
+    --accent: #1f7ab8;
+    --question-bg: rgba(244, 250, 255, 0.85);
+    --question-border: rgba(31, 122, 184, 0.22);
+
+    max-width: 1120px;
+    margin: 1.25rem auto 2.6rem;
+    padding: 0 1rem;
+    color: var(--text-primary);
 }
 
-.buttons {
-    padding-top: 1em;
+.theme-dark {
+    --surface-main: rgba(24, 29, 40, 0.88);
+    --surface-elevated: rgba(31, 37, 50, 0.96);
+    --text-primary: #e8effa;
+    --text-muted: #a4b2c4;
+    --border-soft: rgba(168, 186, 208, 0.2);
+    --shadow-soft: 0 16px 36px rgba(0, 0, 0, 0.4);
+    --shadow-strong: 0 14px 28px rgba(3, 24, 37, 0.5);
+    --danger-bg: linear-gradient(135deg, #e55474, #ff7996);
+    --success-bg: linear-gradient(135deg, #18bf8e, #2fcf77);
+    --focus-ring: #7ec8ff;
+    --accent: #71bdf1;
+    --question-bg: rgba(27, 40, 56, 0.9);
+    --question-border: rgba(113, 189, 241, 0.28);
+}
+
+.theme-christmas {
+    --surface-main: rgba(12, 52, 40, 0.9);
+    --surface-elevated: rgba(18, 60, 45, 0.96);
+    --text-primary: #ddf6e6;
+    --text-muted: #9cd2b0;
+    --border-soft: rgba(151, 217, 180, 0.22);
+    --shadow-soft: 0 16px 36px rgba(1, 31, 23, 0.42);
+    --shadow-strong: 0 14px 28px rgba(4, 41, 30, 0.56);
+    --danger-bg: linear-gradient(135deg, #e35f79, #ff849c);
+    --success-bg: linear-gradient(135deg, #2aa869, #45ce8a);
+    --focus-ring: #7de1ad;
+    --accent: #7ce1a8;
+    --question-bg: rgba(13, 70, 50, 0.9);
+    --question-border: rgba(124, 225, 168, 0.28);
+}
+
+.theme-valentines {
+    --surface-main: rgba(255, 244, 248, 0.92);
+    --surface-elevated: rgba(255, 251, 253, 0.97);
+    --text-primary: #7b2f51;
+    --text-muted: #ac6787;
+    --border-soft: rgba(183, 93, 131, 0.22);
+    --shadow-soft: 0 16px 34px rgba(197, 112, 146, 0.2);
+    --shadow-strong: 0 14px 28px rgba(190, 106, 141, 0.3);
+    --danger-bg: linear-gradient(135deg, #e75e89, #ff86ae);
+    --success-bg: linear-gradient(135deg, #24b882, #29c6ad);
+    --focus-ring: #e67dac;
+    --accent: #cd4d82;
+    --question-bg: rgba(255, 239, 246, 0.95);
+    --question-border: rgba(205, 77, 130, 0.26);
+}
+
+.create-game-shell {
+    border: 1px solid var(--border-soft);
+    background: var(--surface-main);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 1.35rem;
+}
+
+.buttons-row {
+    margin-top: 1.15rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+}
+
+.action-button {
+    min-width: 128px;
+    border-radius: 12px !important;
+    height: 44px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #fff !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cancel-button {
+    background: var(--danger-bg);
+    box-shadow: var(--shadow-strong);
+}
+
+.save-button {
+    margin-left: auto;
+    background: var(--success-bg);
+    box-shadow: var(--shadow-strong);
+}
+
+.action-button:hover {
+    transform: translateY(-1px);
+}
+
+@media (max-width: 780px) {
+    .create-game-page {
+        padding: 0 0.75rem;
+    }
+
+    .create-game-shell {
+        border-radius: 14px;
+        padding: 1rem 0.85rem;
+    }
+
+    .buttons-row {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .save-button {
+        margin-left: 0;
+    }
 }

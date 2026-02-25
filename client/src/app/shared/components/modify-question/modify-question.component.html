@@ -1,5 +1,13 @@
 <app-question-form [question]="currentQuestion"></app-question-form>
-<mat-dialog-actions class="buttons page" id="space-between">
-    <button mat-raised-button class="background-red action-button block" (click)="onCancelModification()">{{ 'BUTTONS.CANCEL' | translate }}</button>
-    <button mat-raised-button class="background-green action-button block" (click)="onSaveQuestion()">{{ 'BUTTONS.SAVE' | translate }}</button>
+<mat-dialog-actions
+    class="dialog-actions"
+    [ngClass]="{
+        'light-mode': this.accountService.theme === 'light',
+        'dark-mode': this.accountService.theme === 'dark',
+        christmas: this.accountService.theme === 'christmas',
+        valentines: this.accountService.theme === 'valentines'
+    }"
+>
+    <button mat-raised-button class="cancel-button action-button" (click)="onCancelModification()">{{ 'BUTTONS.CANCEL' | translate }}</button>
+    <button mat-raised-button class="save-button action-button" (click)="onSaveQuestion()">{{ 'BUTTONS.SAVE' | translate }}</button>
 </mat-dialog-actions>

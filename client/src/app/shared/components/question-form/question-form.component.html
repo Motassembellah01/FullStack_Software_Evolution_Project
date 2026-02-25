@@ -1,5 +1,5 @@
 <mat-dialog-content
-    class="page"
+    class="question-dialog-content"
     [ngClass]="{
         'light-mode': this.accountService.theme === 'light',
         'dark-mode': this.accountService.theme === 'dark',
@@ -7,176 +7,114 @@
         valentines: this.accountService.theme === 'valentines',
     }"
 >
-    <div class="points" id="space-between">
-        <p
-            [ngClass]="{
-                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-            }"
-        >
-            {{ 'QUESTION_FORM.POINTS' | translate }}
-        </p>
-        <mat-icon fontIcon="remove" (click)="onDecreasePoints()" class="icon color-blue pointer"></mat-icon>
-        <p
-            class="points-element color-blue"
-            [ngClass]="{
-                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-            }"
-        >
-            {{ question.points }}
-        </p>
-        <mat-icon fontIcon="add" (click)="onIncreasePoints()" class="icon color-blue pointer"></mat-icon>
-    </div>
+    <section class="form-block">
+        <div class="points-row">
+            <p class="form-label">{{ 'QUESTION_FORM.POINTS' | translate }}</p>
+            <div class="points-controls">
+                <button type="button" class="step-btn" (click)="onDecreasePoints()">
+                    <mat-icon fontIcon="remove"></mat-icon>
+                </button>
+                <span class="points-value">{{ question.points }}</span>
+                <button type="button" class="step-btn" (click)="onIncreasePoints()">
+                    <mat-icon fontIcon="add"></mat-icon>
+                </button>
+            </div>
+        </div>
+    </section>
 
-    <p
-        class="description"
-        [ngClass]="{
-            'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-        }"
-    >
-        {{ 'QUESTION_FORM.QUESTION_TITLE' | translate }}
-    </p>
-    <mat-form-field class="input-description">
-        <input [(ngModel)]="question.text" matInput class="input-element" />
-    </mat-form-field>
+    <section class="form-block">
+        <p class="form-label">{{ 'QUESTION_FORM.QUESTION_TITLE' | translate }}</p>
+        <mat-form-field appearance="outline" class="input-description">
+            <input [(ngModel)]="question.text" matInput class="input-element" />
+        </mat-form-field>
+    </section>
 
-    <p
-        [ngClass]="{
-            'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-        }"
-    >
-        {{ 'QUESTION_FORM.QUESTION_TYPE' | translate }}
-    </p>
-    <mat-form-field class="input-type">
-        <mat-select [(value)]="question.type">
-            <mat-option value="QCM" (onSelectionChange)="onAddChoices()">QCM</mat-option>
-            <mat-option value="QRL">QRL</mat-option>
-            <mat-option value="QRE">QRE</mat-option>
-        </mat-select>
-    </mat-form-field>
+    <section class="form-block">
+        <p class="form-label">{{ 'QUESTION_FORM.QUESTION_TYPE' | translate }}</p>
+        <mat-form-field appearance="outline" class="input-type">
+            <mat-select [(value)]="question.type">
+                <mat-option value="QCM" (onSelectionChange)="onAddChoices()">QCM</mat-option>
+                <mat-option value="QRL">QRL</mat-option>
+                <mat-option value="QRE">QRE</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </section>
 
-    <div *ngIf="question.type === 'QCM'">
+    <section *ngIf="question.type === 'QCM'" class="form-block">
         <div class="choice-answer">
-            <p
-                [ngClass]="{
-                    'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-                }"
-            >
-                {{ 'QUESTION_FORM.CHOICE' | translate }}
-            </p>
+            <p class="form-label">{{ 'QUESTION_FORM.CHOICE' | translate }}</p>
 
-            <div cdkDropList (cdkDropListDropped)="onDrop($event)">
+            <div cdkDropList (cdkDropListDropped)="onDrop($event)" class="choices-list">
                 <div *ngFor="let choices of question.choices; index as i" cdkDrag class="list-item">
-                    <mat-icon fontIcon="delete" class="delete-icon color-blue" (click)="onDeleteChoice(i)"></mat-icon>
+                    <button type="button" class="delete-choice" (click)="onDeleteChoice(i)">
+                        <mat-icon fontIcon="delete"></mat-icon>
+                    </button>
 
                     <span class="cursor-item">
-                        <mat-form-field class="choice-input">
-                            <mat-label
-                                [ngClass]="{
-                                    'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-                                }"
-                                >{{ 'QUESTION_FORM.CHOICE' | translate }} {{ i + 1 }}
-                            </mat-label>
+                        <mat-form-field appearance="outline" class="choice-input">
+                            <mat-label>{{ 'QUESTION_FORM.CHOICE' | translate }} {{ i + 1 }}</mat-label>
                             <input [(ngModel)]="question.choices[i].text" matInput class="input-element" />
                         </mat-form-field>
 
-                        <mat-slide-toggle
-                            class="toggle-button"
-                            labelPosition="before"
-                            color="primary"
-                            [(ngModel)]="question.choices[i].isCorrect"
-                            [ngClass]="{
-                                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-                            }"
-                            ><p class="validity"
-                                [ngClass]="{
-                                    'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-                                }"
-                            >
-                                {{ 'QUESTION_FORM.VALIDITY' | translate }}
-                            </p></mat-slide-toggle
-                        >
+                        <mat-slide-toggle class="toggle-button" labelPosition="before" color="primary" [(ngModel)]="question.choices[i].isCorrect">
+                            <p class="validity">{{ 'QUESTION_FORM.VALIDITY' | translate }}</p>
+                        </mat-slide-toggle>
                         <span class="is-correct" *ngIf="question.choices[i].isCorrect">{{ 'QUESTION_FORM.RIGHT_ANSWER' | translate }}</span>
                         <span class="color-red" *ngIf="!question.choices[i].isCorrect">{{ 'QUESTION_FORM.WRONG_ANSWER' | translate }}</span>
                     </span>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div *ngIf="question.type === 'QRE'">
-        <p
-            class="description"
-            [ngClass]="{
-                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-            }"
-        >
-            {{ 'QUESTION_FORM.RIGHT_ANSWER' | translate }}
-        </p>
-        <mat-form-field class="input-description">
-            <input [(ngModel)]="question.correctAnswer" matInput type="number" class="input-element" (wheel)="$event.preventDefault()" />
-        </mat-form-field>
+    <section *ngIf="question.type === 'QRE'" class="form-block qre-grid">
+        <div>
+            <p class="form-label">{{ 'QUESTION_FORM.RIGHT_ANSWER' | translate }}</p>
+            <mat-form-field appearance="outline" class="input-description">
+                <input [(ngModel)]="question.correctAnswer" matInput type="number" class="input-element" (wheel)="$event.preventDefault()" />
+            </mat-form-field>
+        </div>
 
-        <p
-            class="description"
-            [ngClass]="{
-                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-            }"
-        >
-            {{ 'QUESTION_FORM.LOWER_BOUND' | translate }}
-        </p>
-        <mat-form-field class="input-description">
-            <input [(ngModel)]="question.lowerBound" matInput type="number" class="input-element" (wheel)="$event.preventDefault()" />
-        </mat-form-field>
+        <div>
+            <p class="form-label">{{ 'QUESTION_FORM.LOWER_BOUND' | translate }}</p>
+            <mat-form-field appearance="outline" class="input-description">
+                <input [(ngModel)]="question.lowerBound" matInput type="number" class="input-element" (wheel)="$event.preventDefault()" />
+            </mat-form-field>
+        </div>
 
-        <p
-            class="description"
-            [ngClass]="{
-                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-            }"
-        >
-            {{ 'QUESTION_FORM.UPPER_BOUND' | translate }}
-        </p>
-        <mat-form-field class="input-description">
-            <input [(ngModel)]="question.upperBound" matInput type="number" class="input-element" (wheel)="$event.preventDefault()" />
-        </mat-form-field>
+        <div>
+            <p class="form-label">{{ 'QUESTION_FORM.UPPER_BOUND' | translate }}</p>
+            <mat-form-field appearance="outline" class="input-description">
+                <input [(ngModel)]="question.upperBound" matInput type="number" class="input-element" (wheel)="$event.preventDefault()" />
+            </mat-form-field>
+        </div>
 
-        <p
-            class="description"
-            [ngClass]="{
-                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-            }"
-        >
-            {{ 'QUESTION_FORM.TOLERANCE' | translate }}
-        </p>
-        <mat-form-field class="input-description">
-            <input
-                [(ngModel)]="question.tolerance"
-                matInput
-                type="number"
-                (blur)="validateQREMargin()"
-                class="input-element"
-                (wheel)="$event.preventDefault()"
-            />
-        </mat-form-field>
-    </div>
-    <button
-        *ngIf="question.type === 'QCM'"
-        mat-raised-button
-        class="background-beige"
-        id="add-choice-button"
-        [disabled]="maxChoicesReached()"
-        (click)="onNewChoice()"
-    >
+        <div>
+            <p class="form-label">{{ 'QUESTION_FORM.TOLERANCE' | translate }}</p>
+            <mat-form-field appearance="outline" class="input-description">
+                <input
+                    [(ngModel)]="question.tolerance"
+                    matInput
+                    type="number"
+                    (blur)="validateQREMargin()"
+                    class="input-element"
+                    (wheel)="$event.preventDefault()"
+                />
+            </mat-form-field>
+        </div>
+    </section>
+
+    <button *ngIf="question.type === 'QCM'" mat-raised-button class="add-button" [disabled]="maxChoicesReached()" (click)="onNewChoice()">
         {{ 'BUTTONS.ADD_CHOICE' | translate }}
     </button>
 
-    <div *ngIf="question.type === 'QRL' || question.type === 'QRE'">
+    <section *ngIf="question.type === 'QRL' || question.type === 'QRE'" class="form-block">
         <div *ngIf="this.question.image" class="image-preview-container">
             <img [src]="this.question.image" alt="Uploaded Image" class="image-preview" />
         </div>
         <input type="file" accept="image/*" (change)="onFileSelected($event)" id="image-upload" hidden />
-        <button mat-raised-button class="background-beige" id="add-image-button" (click)="triggerFileInput()">
+        <button mat-raised-button class="add-button" id="add-image-button" (click)="triggerFileInput()">
             {{ question.image ? ('BUTTONS.MODIFY_IMAGE' | translate) : ('BUTTONS.ADD_IMAGE' | translate) }}
         </button>
-    </div>
+    </section>
 </mat-dialog-content>

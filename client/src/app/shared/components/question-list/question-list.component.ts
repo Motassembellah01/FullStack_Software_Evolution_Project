@@ -4,7 +4,6 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Question } from '@app/core/classes/question/question';
 import { DIALOG } from '@app/core/constants/constants';
-import { AccountService } from '@app/core/http/services/account-service/account.service';
 import { QuestionService } from '@app/core/services/question-service/question.service';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { ModifyQuestionComponent } from '@app/shared/components/modify-question/modify-question.component';
@@ -26,7 +25,6 @@ export class QuestionListComponent {
     constructor(
         public questionService: QuestionService,
         public dialog: MatDialog,
-        public accountService: AccountService
     ) {}
 
     onDrop(event: CdkDragDrop<string[]>): void {

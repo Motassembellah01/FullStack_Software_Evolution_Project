@@ -1,7 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Question } from '@app/core/classes/question/question';
 import { DIALOG_MESSAGE_EN, DIALOG_MESSAGE_FR } from '@app/core/constants/constants';
+import { AccountService } from '@app/core/http/services/account-service/account.service';
 import { CancelConfirmationService } from '@app/core/services/cancel-confirmation/cancel-confirmation.service';
 import { QuestionService } from '@app/core/services/question-service/question.service';
 import { AppMaterialModule } from '@app/modules/material.module';
@@ -20,7 +22,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     templateUrl: './modify-question.component.html',
     styleUrls: ['./modify-question.component.scss'],
     standalone: true,
-    imports: [AppMaterialModule, QuestionFormComponent, TranslateModule],
+    imports: [CommonModule, AppMaterialModule, QuestionFormComponent, TranslateModule],
 })
 export class ModifyQuestionComponent implements OnInit {
     currentQuestion: Question;
@@ -33,6 +35,7 @@ export class ModifyQuestionComponent implements OnInit {
         private dialogRef: MatDialogRef<ModifyQuestionComponent>,
         private confirmationService: CancelConfirmationService,
         private translateService: TranslateService,
+        public accountService: AccountService,
     ) {}
 
     ngOnInit(): void {

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
 import { DIALOG, QCM_TIME } from '@app/core/constants/constants';
-import { AccountService } from '@app/core/http/services/account-service/account.service';
 import { GameServiceService } from '@app/core/http/services/game-service/game-service.service';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AlertDialogComponent } from '@app/shared/alert-dialog/alert-dialog.component';
@@ -30,7 +29,6 @@ export class GameFormComponent implements OnInit {
         public gameService: GameServiceService,
         public dialog: MatDialog,
         private router: Router,
-        public accountService: AccountService,
     ) {}
 
     ngOnInit(): void {

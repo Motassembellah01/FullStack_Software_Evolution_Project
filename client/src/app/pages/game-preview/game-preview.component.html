@@ -1,99 +1,195 @@
 <app-logo></app-logo>
-<div *ngIf="game$ | async as game">
-    <div class="nav-container">
-        <button class="nav-button background-beige" mat-raised-button routerLink="/create">{{ 'NAV_BUTTONS.PREVIOUS_PAGE' | translate }}</button>
-        <button class="nav-button background-beige" mat-raised-button mat-button (click)="openMatchConfigDialog()">
-            {{ 'CONFIGURE_MATCH.TITLE' | translate }}
-        </button>
-        <!-- {{ 'NAV_BUTTONS.CREATE_MATCH' | translate }}
-        </button> -->
-        <!-- <button class="nav-button background-beige" mat-raised-button (click)="onTestGame(game.id)">Tester le jeu</button> -->
-    </div>
-    <div
-        id="game-infos"
-        class="flex-center content-center"
-        [ngClass]="{
-            'color-blue': this.accountService.theme === 'light' || this.accountService.theme === 'valentines',
-            'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-        }"
-    >
-        <p id="game-name" class="color-red bold">{{ game | localizedField:'title' }}</p>
-        <p id="game-description" class="flex italic content-center">{{ game | localizedField:'description' }}</p>
-        <p id="qcmTime" class="color-red">{{ 'GAME_FORM.QCM_TIME' | translate }} {{ game.duration }} s</p>
-    </div>
-    <div *ngFor="let question of game.questions; let i = index">
-        <p
-            class="game-questions"
+<div
+    *ngIf="game$ | async as game"
+    class="preview-page"
+    [ngClass]="{
+        'theme-light': this.accountService.theme === 'light',
+        'theme-dark': this.accountService.theme === 'dark',
+        'theme-christmas': this.accountService.theme === 'christmas',
+        'theme-valentines': this.accountService.theme === 'valentines'
+    }"
+>
+    <section class="overview-shell">
+        <div class="overview-main">
+            <p class="eyebrow">Match preview</p>
+            <h1 id="game-name" class="bold">{{ game | localizedField:'title' }}</h1>
+            <p id="game-description" class="italic">{{ game | localizedField:'description' }}</p>
+
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon"><mat-icon>schedule</mat-icon></div>
+                    <div class="stat-copy">
+                        <p class="stat-label">{{ 'GAME_FORM.QCM_TIME' | translate }}</p>
+                        <p class="stat-value">{{ game.duration }} s</p>
+                    </div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon"><mat-icon>quiz</mat-icon></div>
+                    <div class="stat-copy">
+                        <p class="stat-label">Questions</p>
+                        <p class="stat-value">{{ game.questions.length }}</p>
+                    </div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-icon"><mat-icon>timer</mat-icon></div>
+                    <div class="stat-copy">
+                        <p class="stat-label">Estimated total</p>
+                        <p class="stat-value">~{{ game.duration * game.questions.length }} s</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <aside class="action-panel">
+            <h3>Ready to launch?</h3>
+            <p>Configure match settings, then create a room for players.</p>
+            <button class="configure-match-btn" mat-raised-button (click)="openMatchConfigDialog()">
+                <mat-icon>tune</mat-icon>
+                {{ 'CONFIGURE_MATCH.TITLE' | translate }}
+            </button>
+        </aside>
+    </section>
+
+    <section class="questions-section">
+        <div class="section-header">
+            <h2>Question preview</h2>
+            <p>Scan the full flow quickly before opening the match.</p>
+        </div>
+        <div class="questions-list">
+        <div
+            *ngFor="let question of game.questions; let i = index"
+            class="question-card"
             [ngClass]="{
-                'color-blue': this.accountService.theme === 'light' || this.accountService.theme === 'valentines',
-                'color-white': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
+                'question-type-qcm': question.type === 'QCM',
+                'question-type-qrl': question.type === 'QRL',
+                'question-type-qre': question.type === 'QRE'
             }"
         >
-            Question {{ i + 1 }}
-        </p>
-        <div class="question-container flex">
-            <mat-icon *ngIf="question.type === 'QCM'" id="qcm-icon">format_list_bulleted</mat-icon>
-            <mat-icon *ngIf="question.type === 'QRL'" id="qrl-icon">edit_note</mat-icon>
-            <mat-icon *ngIf="question.type === 'QRE'" id="qre-icon">compare_arrows</mat-icon>
-            <mat-card>
-                <mat-card-content>{{ question | localizedField:'text' }}</mat-card-content>
-            </mat-card>
+            <div class="question-index">{{ i + 1 }}</div>
+            <div class="question-content">
+                <div class="question-topline">
+                    <span class="question-number">Question {{ i + 1 }}</span>
+                    <div class="question-type-chip">
+                    <mat-icon *ngIf="question.type === 'QCM'" id="qcm-icon">format_list_bulleted</mat-icon>
+                    <mat-icon *ngIf="question.type === 'QRL'" id="qrl-icon">edit_note</mat-icon>
+                    <mat-icon *ngIf="question.type === 'QRE'" id="qre-icon">compare_arrows</mat-icon>
+                    <span>{{ question.type }}</span>
+                </div>
+                </div>
+                <p class="question-text">{{ question | localizedField:'text' }}</p>
+            </div>
         </div>
-    </div>
+        </div>
+    </section>
 </div>
 
 <ng-template #matchConfigDialog *ngIf="game$ | async as game">
     <div
+        class="config-dialog"
         [ngClass]="{
-            'light-mode': this.accountService.theme === 'light',
-            'dark-mode': this.accountService.theme === 'dark',
-            christmas: this.accountService.theme === 'christmas',
-            valentines: this.accountService.theme === 'valentines',
+            'dialog-light': this.accountService.theme === 'light',
+            'dialog-dark': this.accountService.theme === 'dark',
+            'dialog-christmas': this.accountService.theme === 'christmas',
+            'dialog-valentines': this.accountService.theme === 'valentines'
         }"
     >
-        <h1
-            [ngClass]="{
-                'color-blue': this.accountService.theme === 'light' || this.accountService.theme === 'valentines',
-                'color-brown': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-            }"
-        >
+        <h1 class="dialog-title">
             {{ 'CONFIGURE_MATCH.DESCRIPTION' | translate }}
         </h1>
+        <p class="dialog-subtitle">Select the essentials and launch.</p>
         <div class="center-container">
-            <mat-form-field appearance="fill">
-                <mat-label>{{ 'CONFIGURE_MATCH.TYPE' | translate }}</mat-label>
-                <mat-select [(value)]="isTeamMatch">
-                    <mat-option [value]="false">{{ 'CONFIGURE_MATCH.SOLO' | translate }}</mat-option>
-                    <mat-option [value]="true">{{ 'CONFIGURE_MATCH.TEAM' | translate }}</mat-option>
-                </mat-select>
-            </mat-form-field>
+            <div class="config-item">
+                <label class="config-label"><mat-icon>groups</mat-icon>{{ 'CONFIGURE_MATCH.TYPE' | translate }}</label>
+                <mat-form-field appearance="fill">
+                    <mat-select [(value)]="isTeamMatch" [aria-label]="'CONFIGURE_MATCH.TYPE' | translate">
+                        <mat-select-trigger>
+                            <span class="option-trigger">
+                                <mat-icon>{{ isTeamMatch ? 'groups' : 'person' }}</mat-icon>
+                                {{ isTeamMatch ? 'Team match' : 'Individual match' }}
+                            </span>
+                        </mat-select-trigger>
+                        <mat-option [value]="false">
+                            <span class="option-content">
+                                <mat-icon>person</mat-icon>
+                                <span class="option-copy">
+                                    <strong>{{ 'CONFIGURE_MATCH.SOLO' | translate }}</strong>
+                                </span>
+                            </span>
+                        </mat-option>
+                        <mat-option [value]="true">
+                            <span class="option-content">
+                                <mat-icon>groups</mat-icon>
+                                <span class="option-copy">
+                                    <strong>{{ 'CONFIGURE_MATCH.TEAM' | translate }}</strong>
+                                </span>
+                            </span>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="fill">
-                <mat-label>{{ 'CONFIGURE_MATCH.ACCESSIBILITY' | translate }}</mat-label>
-                <mat-select [(value)]="isOnlyFriends">
-                    <mat-option [value]="false">{{ 'CONFIGURE_MATCH.EVERYONE' | translate }}</mat-option>
-                    <mat-option [value]="true">{{ 'CONFIGURE_MATCH.FRIENDS' | translate }}</mat-option>
-                </mat-select>
-            </mat-form-field>
+            <div class="config-item">
+                <label class="config-label"><mat-icon>lock_open</mat-icon>{{ 'CONFIGURE_MATCH.ACCESSIBILITY' | translate }}</label>
+                <mat-form-field appearance="fill">
+                    <mat-select [(value)]="isOnlyFriends" [aria-label]="'CONFIGURE_MATCH.ACCESSIBILITY' | translate">
+                        <mat-select-trigger>
+                            <span class="option-trigger">
+                                <mat-icon>{{ isOnlyFriends ? 'group' : 'public' }}</mat-icon>
+                                {{ isOnlyFriends ? 'Friends only' : 'Everyone' }}
+                            </span>
+                        </mat-select-trigger>
+                        <mat-option [value]="false">
+                            <span class="option-content">
+                                <mat-icon>public</mat-icon>
+                                <span class="option-copy">
+                                    <strong>{{ 'CONFIGURE_MATCH.EVERYONE' | translate }}</strong>
+                                </span>
+                            </span>
+                        </mat-option>
+                        <mat-option [value]="true">
+                            <span class="option-content">
+                                <mat-icon>group</mat-icon>
+                                <span class="option-copy">
+                                    <strong>{{ 'CONFIGURE_MATCH.FRIENDS' | translate }}</strong>
+                                </span>
+                            </span>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="fill">
-                <mat-label>{{ 'CONFIGURE_MATCH.ENTRY_PRICE' | translate }}</mat-label>
-                <mat-select [(value)]="isPricedMatch">
-                    <mat-option [value]="false">{{ 'CONFIGURE_MATCH.WITHOUT_PRICE' | translate }}</mat-option>
-                    <mat-option [value]="true">{{ 'CONFIGURE_MATCH.WITH_PRICE' | translate }}</mat-option>
-                </mat-select>
-            </mat-form-field>
+            <div class="config-item">
+                <label class="config-label"><mat-icon>payments</mat-icon>{{ 'CONFIGURE_MATCH.ENTRY_PRICE' | translate }}</label>
+                <mat-form-field appearance="fill">
+                    <mat-select [(value)]="isPricedMatch" [aria-label]="'CONFIGURE_MATCH.ENTRY_PRICE' | translate">
+                        <mat-select-trigger>
+                            <span class="option-trigger">
+                                <mat-icon>{{ isPricedMatch ? 'paid' : 'money_off' }}</mat-icon>
+                                {{ isPricedMatch ? 'With entry price' : 'No entry price' }}
+                            </span>
+                        </mat-select-trigger>
+                        <mat-option [value]="false">
+                            <span class="option-content">
+                                <mat-icon>money_off</mat-icon>
+                                <span class="option-copy">
+                                    <strong>{{ 'CONFIGURE_MATCH.WITHOUT_PRICE' | translate }}</strong>
+                                </span>
+                            </span>
+                        </mat-option>
+                        <mat-option [value]="true">
+                            <span class="option-content">
+                                <mat-icon>paid</mat-icon>
+                                <span class="option-copy">
+                                    <strong>{{ 'CONFIGURE_MATCH.WITH_PRICE' | translate }}</strong>
+                                </span>
+                            </span>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
         </div>
         <div *ngIf="isPricedMatch">
             <div class="input-container">
-                <label
-                    for="priceMatchInput"
-                    [ngClass]="{
-                        'color-blue': this.accountService.theme === 'light' || this.accountService.theme === 'valentines',
-                        'color-brown': this.accountService.theme === 'christmas' || this.accountService.theme === 'dark',
-                    }"
-                    >{{ 'CONFIGURE_MATCH.ENTER_PRICE' | translate }}</label
-                >
+                <label for="priceMatchInput">{{ 'CONFIGURE_MATCH.ENTER_PRICE' | translate }}</label>
                 <input
                     id="priceMatchInput"
                     type="number"
@@ -109,12 +205,12 @@
 
     <div
         mat-dialog-actions
-        id="space-between"
+        class="dialog-actions"
         [ngClass]="{
-            'light-mode': this.accountService.theme === 'light',
-            'dark-mode': this.accountService.theme === 'dark',
-            christmas: this.accountService.theme === 'christmas',
-            valentines: this.accountService.theme === 'valentines',
+            'dialog-light': this.accountService.theme === 'light',
+            'dialog-dark': this.accountService.theme === 'dark',
+            'dialog-christmas': this.accountService.theme === 'christmas',
+            'dialog-valentines': this.accountService.theme === 'valentines'
         }"
     >
         <button mat-raised-button mat-dialog-close class="background-red buttons-dialog">{{ 'BUTTONS.CANCEL' | translate }}</button>

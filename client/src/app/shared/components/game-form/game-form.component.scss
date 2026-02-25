@@ -1,37 +1,95 @@
+.game-form-layout {
+    display: grid;
+    gap: 1rem;
+}
+
+.game-details-card,
+.questions-card {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    padding: 1rem;
+}
+
+.fields-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.3rem 0.9rem;
+}
+
 .input {
-    width: 22%;
+    width: 100%;
 }
 
-.informations {
-    justify-content: center;
+.input-wide {
+    grid-column: 1 / -1;
 }
 
-.time {
-    width: 22%;
+.input-compact {
+    grid-column: span 1;
+    max-width: 260px;
 }
 
-.time-element {
-    width: 6rem;
-    height: 1.4rem;
-    margin-top: 20px;
+:host ::ng-deep .input .mdc-text-field {
+    background: color-mix(in srgb, var(--surface-main) 72%, transparent);
+    border-radius: 10px;
 }
 
-p {
-    font-size: 1.5rem;
-    padding-top: 1em;
-    padding-bottom: 0.5em;
-    .description {
-        padding-top: 2rem;
-    }
+:host ::ng-deep .input .mdc-text-field--outlined .mdc-notched-outline__leading,
+:host ::ng-deep .input .mdc-text-field--outlined .mdc-notched-outline__trailing,
+:host ::ng-deep .input .mdc-text-field--outlined .mdc-notched-outline__notch {
+    border-color: var(--border-soft) !important;
+}
+
+:host ::ng-deep .input.mat-focused .mdc-text-field--outlined .mdc-notched-outline__leading,
+:host ::ng-deep .input.mat-focused .mdc-text-field--outlined .mdc-notched-outline__trailing,
+:host ::ng-deep .input.mat-focused .mdc-text-field--outlined .mdc-notched-outline__notch {
+    border-color: var(--focus-ring) !important;
+}
+
+:host ::ng-deep .input .mdc-floating-label,
+:host ::ng-deep .input input,
+:host ::ng-deep .input textarea {
+    color: var(--text-primary) !important;
+}
+
+.questions-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.35rem;
 }
 
 .action-button {
-    display: block;
-    font-size: 1.5rem;
-    height: 3rem;
-    transition: transform 0.2s;
+    border-radius: 12px !important;
+    height: 42px;
+    padding: 0 1.1rem !important;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 72%, #5bc8ff 28%));
+    box-shadow: 0 12px 24px color-mix(in srgb, var(--accent) 35%, transparent);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#add-question-button {
-    margin-left: auto;
+.action-button:hover {
+    transform: translateY(-1px);
+}
+
+@media (max-width: 880px) {
+    .fields-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .input-compact {
+        max-width: none;
+    }
+}
+
+@media (max-width: 780px) {
+    .game-details-card,
+    .questions-card {
+        border-radius: 12px;
+        padding: 0.8rem;
+    }
 }

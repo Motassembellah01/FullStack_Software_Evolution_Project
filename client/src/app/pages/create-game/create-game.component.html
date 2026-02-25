@@ -1,8 +1,19 @@
 <app-logo></app-logo>
-<app-game-form></app-game-form>
-<div class="page">
-    <div class="buttons" id="space-between">
-        <button mat-raised-button class="background-red action-button block" (click)="onCancel()">{{ 'BUTTONS.CANCEL' | translate }}</button>
-        <button mat-raised-button (click)="onSave()" class="background-green action-button">{{ 'BUTTONS.SAVE' | translate }}</button>
+<div
+    class="create-game-page"
+    [ngClass]="{
+        'theme-light': this.accountService.theme === 'light',
+        'theme-dark': this.accountService.theme === 'dark',
+        'theme-christmas': this.accountService.theme === 'christmas',
+        'theme-valentines': this.accountService.theme === 'valentines'
+    }"
+>
+    <div class="create-game-shell">
+        <app-game-form></app-game-form>
+
+        <div class="buttons-row">
+            <button mat-raised-button class="cancel-button action-button" (click)="onCancel()">{{ 'BUTTONS.CANCEL' | translate }}</button>
+            <button mat-raised-button class="save-button action-button" (click)="onSave()">{{ 'BUTTONS.SAVE' | translate }}</button>
+        </div>
     </div>
 </div>
