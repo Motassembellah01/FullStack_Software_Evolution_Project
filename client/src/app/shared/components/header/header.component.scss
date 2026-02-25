@@ -61,13 +61,13 @@
 }
 
 .back-btn {
-    background-color: rgba(59, 130, 246, 0.08);
+    background-color: transparent;
     width: 40px;
     padding: 6px !important;
 }
 
 .back-btn:hover {
-    background-color: rgba(59, 130, 246, 0.16);
+    background-color: transparent;
 }
 
 .back-btn .nav-icon {
@@ -76,23 +76,23 @@
 }
 
 .home-btn {
-    background-color: rgba(14, 188, 204, 0.1);
+    background-color: transparent;
     gap: 4px;
 }
 
 .home-btn:hover {
-    background-color: rgba(14, 188, 204, 0.2);
+    background-color: transparent;
 }
 
 .home-btn .nav-icon {
-    color: #0ebccc;
+    color: #3b82f6;
     font-size: 1.4rem;
 }
 
 .nav-label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #0ebccc;
+    color: #3b82f6;
     margin: 0 !important;
     margin-top: 0 !important;
     letter-spacing: 0.02em;
