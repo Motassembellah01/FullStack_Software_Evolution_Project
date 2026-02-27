@@ -86,7 +86,7 @@ object FriendSocketService : Service() {
             this.accounts = this.mapAccounts(this.accounts)
         }
 
-        SocketService.on<JSONArray>("friendsThatUserRequested") { data ->
+        SocketService.on<JSONArray>("friendRequestsSentUpdated") { data ->
             try {
                 val dataString = data.toString()
                 val typeFriendRequest = object : TypeToken<List<String>>() {}.type
@@ -99,7 +99,7 @@ object FriendSocketService : Service() {
             }
         }
 
-        SocketService.on<JSONArray>("friendRequestsThatUserReceived") { data ->
+        SocketService.on<JSONArray>("friendRequestsReceivedUpdated") { data ->
             try {
                 val dataString = data.toString()
                 val typeFriendRequest = object : TypeToken<List<FriendRequestData>>() {}.type
@@ -112,35 +112,21 @@ object FriendSocketService : Service() {
             }
         }
 
-        SocketService.on<JSONArray>("updateFriendListReceiver") { data ->
+        SocketService.on<JSONArray>("friendsUpdated") { data ->
             try {
                 val dataString = data.toString()
-                val typeFriendsReceiver = object : TypeToken<List<String>>() {}.type
-                val friendsReceiver: List<String> = Gson().fromJson(dataString, typeFriendsReceiver)
-                _friends.postValue(friendsReceiver)
+                val typeFriends = object : TypeToken<List<String>>() {}.type
+                val friendIds: List<String> = Gson().fromJson(dataString, typeFriends)
+                _friends.postValue(friendIds)
                 this.accounts = this.mapAccounts(this.accounts)
 
-                Log.d("FriendSocketService", "New receiver friend list: $friendsReceiver")
+                Log.d("FriendSocketService", "New friend list: $friendIds")
             } catch (e: Exception) {
-                Log.e("FriendSocketService", "Error processing receiver friend list update: ${e.message}")
+                Log.e("FriendSocketService", "Error processing friend list update: ${e.message}")
             }
         }
 
-        SocketService.on<JSONArray>("updateFriendListSender") { data ->
-            try {
-                val dataString = data.toString()
-                val typeFriendsSender = object : TypeToken<List<String>>() {}.type
-                val friendsSender: List<String> = Gson().fromJson(dataString, typeFriendsSender)
-                _friends.postValue(friendsSender)
-                this.accounts = this.mapAccounts(this.accounts)
-
-                Log.d("FriendSocketService", "New sender friend list: $friendsSender")
-            } catch (e: Exception) {
-                Log.e("FriendSocketService", "Error processing sender friend list update: ${e.message}")
-            }
-        }
-
-        SocketService.on<JSONArray>("updateBlockedUsers") { data ->
+        SocketService.on<JSONArray>("blockedUsersUpdated") { data ->
             try {
                 val dataString = data.toString()
                 val typeBlocked = object : TypeToken<List<String>>() {}.type
@@ -153,7 +139,7 @@ object FriendSocketService : Service() {
                 Log.e("FriendSocketService", "Error processing blocked list : ${e.message}")
             }
         }
-        SocketService.on<JSONArray>("updateBlockedBy") { data ->
+        SocketService.on<JSONArray>("blockedByUsersUpdated") { data ->
             try {
                 val dataString = data.toString()
                 val typeBlockedBy = object : TypeToken<List<String>>() {}.type
