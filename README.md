@@ -1,4 +1,4 @@
-# PolyQuiz - Full-Stack Software Evolution Project
+# PolyQuiz-Social-Gaming-Platform
 
 PolyQuiz is a real-time multiplayer quiz platform with an Electron + Angular client and a NestJS backend.
 
