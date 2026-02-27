@@ -4,6 +4,14 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { ClientSession, Connection } from 'mongoose';
 import { FriendRepository } from './friend.repository';
 
+/**
+ * Application layer for all friend-domain commands.
+ *
+ * Responsibilities:
+ * - enforce friend-domain invariants (no self-request, pending/accepted state checks, etc.)
+ * - orchestrate repository writes and account projection updates
+ * - guarantee consistency by wrapping multi-document operations in a Mongo transaction
+ */
 @Injectable()
 export class FriendApplicationService {
     constructor(
@@ -12,12 +20,16 @@ export class FriendApplicationService {
         @InjectConnection() private readonly connection: Connection,
     ) {}
 
+    /**
+     * Creates a new pending request and updates account-side projections used by the UI.
+     */
     async sendFriendRequest(senderId: string, receiverId: string): Promise<void> {
         if (senderId === receiverId) {
             throw new BadRequestException('Friend request to self is not allowed.');
         }
 
         await this.withTransaction(async (session) => {
+            // Prevent duplicate pending requests in both directions.
             const existingPendingRequest = await this.friendRepository.findPendingRequestBetweenUsers(senderId, receiverId, session);
             if (existingPendingRequest) {
                 throw new BadRequestException('Friend request already exists.');
@@ -29,6 +41,12 @@ export class FriendApplicationService {
         });
     }
 
+    /**
+     * Accepts a pending request:
+     * 1) marks canonical friend record as accepted
+     * 2) updates both account friend projections
+     * 3) removes request-specific projections
+     */
     async acceptFriendRequest(requestId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             const request = await this.friendRepository.findByRequestId(requestId, session);
@@ -46,6 +64,9 @@ export class FriendApplicationService {
         });
     }
 
+    /**
+     * Rejects a pending request and removes request projections.
+     */
     async rejectFriendRequest(requestId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             const request = await this.friendRepository.findByRequestId(requestId, session);
@@ -62,6 +83,9 @@ export class FriendApplicationService {
         });
     }
 
+    /**
+     * Removes an accepted friendship relation and synchronizes both account projections.
+     */
     async removeFriend(userId: string, friendId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             const friendship = await this.friendRepository.findAcceptedFriendshipBetweenUsers(userId, friendId, session);
@@ -75,6 +99,9 @@ export class FriendApplicationService {
         });
     }
 
+    /**
+     * Blocks a friend. The block edge is added first, then friendship is removed if it exists.
+     */
     async blockFriend(userId: string, friendId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             await this.accountService.addToBlockList(userId, friendId, session);
@@ -87,12 +114,18 @@ export class FriendApplicationService {
         });
     }
 
+    /**
+     * Blocks a non-friend user (no friend edge mutation required).
+     */
     async blockNormalUser(userId: string, otherUserId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             await this.accountService.addToBlockList(userId, otherUserId, session);
         });
     }
 
+    /**
+     * For a pending request edge: remove request first, then add block.
+     */
     async blockUserWithPendingRequest(userId: string, otherUserId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             const pendingRequest = await this.friendRepository.findPendingRequestBetweenUsers(userId, otherUserId, session);
@@ -106,6 +139,9 @@ export class FriendApplicationService {
         });
     }
 
+    /**
+     * Cancels a sender-owned pending request.
+     */
     async cancelFriendRequest(senderId: string, receiverId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             const pendingRequest = await this.friendRepository.findPendingRequestBetweenUsers(senderId, receiverId, session);
@@ -118,12 +154,18 @@ export class FriendApplicationService {
         });
     }
 
+    /**
+     * Removes block edge from current user to blocked user.
+     */
     async unblockUser(userId: string, blockedUserId: string): Promise<void> {
         await this.withTransaction(async (session) => {
             await this.accountService.removeFromBlockList(userId, blockedUserId, session);
         });
     }
 
+    /**
+     * Shared transaction wrapper so every command has the same consistency guarantees.
+     */
     private async withTransaction(callback: (session: ClientSession) => Promise<void>): Promise<void> {
         const session = await this.connection.startSession();
         try {
