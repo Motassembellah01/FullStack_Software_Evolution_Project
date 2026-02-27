@@ -11,8 +11,15 @@ import { FRIENDS_EN, FRIENDS_FR } from '@app/core/constants/constants';
 import { Subscription } from 'rxjs';
 import { CancelConfirmationService } from '@app/core/services/cancel-confirmation/cancel-confirmation.service';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
-import { FriendsFacadeService } from '@app/core/services/friends/friends-facade.service';
+import { FriendsFacadeService, FriendsViewModel } from '@app/core/services/friends/friends-facade.service';
+import { FriendRequestData } from '@app/core/interfaces/friend-request-data';
 
+/**
+ * Presentational friend panel component.
+ *
+ * All heavy relation/state logic stays in FriendsFacadeService and
+ * AccountListenerService; this component focuses on rendering and user actions.
+ */
 export enum FriendTab {
     Discover = 'discover',
     Friends = 'friends',
@@ -54,16 +61,22 @@ export enum FriendTab {
 export class FriendsComponent implements OnInit, OnDestroy {
     readonly FriendTab = FriendTab;
 
+    // Local UI state (view mode + search value).
     tabs: string[];
     currentTab: FriendTab = FriendTab.Friends;
     searchTerm: string = '';
 
+    // Data slices bound directly by template.
     filteredDiscoverList: AccountFriend[] = [];
     filteredFriendsList: AccountFriend[] = [];
     blockedUsersList: AccountFriend[] = [];
+    friendRequestsList: FriendRequestData[] = [];
+    friendCount = 0;
+    requestCount = 0;
+    blockedCount = 0;
 
     private langChangeSubscription: Subscription;
-    private accountsChangeSubscription: Subscription;
+    private viewModelSubscription: Subscription;
     constructor(
         public accountService: AccountService,
         public accountListenerService: AccountListenerService,
@@ -75,17 +88,20 @@ export class FriendsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        // 1) HTTP bootstrap
         this.friendsFacadeService.initializeData().subscribe(() => {
-            this.refreshFilteredLists();
+            this.friendsFacadeService.setSearchTerm(this.searchTerm);
         });
+        // 2) websocket live updates
         this.accountListenerService.setUpListeners();
 
         this.langChangeSubscription = this.translateService.onLangChange.subscribe(() => {
             this.updateLanguageDependentProperties();
         });
 
-        this.accountsChangeSubscription = this.accountListenerService.accountsChanged$.subscribe(() => {
-            this.refreshFilteredLists();
+        // 3) bind reactive view model to template-facing fields
+        this.viewModelSubscription = this.friendsFacadeService.viewModel$.subscribe((viewModel: FriendsViewModel) => {
+            this.applyViewModel(viewModel);
         });
     }
 
@@ -93,8 +109,8 @@ export class FriendsComponent implements OnInit, OnDestroy {
         if (this.langChangeSubscription) {
             this.langChangeSubscription.unsubscribe();
         }
-        if (this.accountsChangeSubscription) {
-            this.accountsChangeSubscription.unsubscribe();
+        if (this.viewModelSubscription) {
+            this.viewModelSubscription.unsubscribe();
         }
     }
 
@@ -108,18 +124,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
         };
     }
 
-    get friendCount(): number {
-        return this.friendsFacadeService.getFriendCount();
-    }
-
-    get requestCount(): number {
-        return this.friendsFacadeService.getRequestCount();
-    }
-
-    get blockedCount(): number {
-        return this.friendsFacadeService.getBlockedCount();
-    }
-
+    // Rebuilds tab labels when language changes.
     updateLanguageDependentProperties(): void {
         const isFrench = this.translateService.currentLang === 'fr';
         this.tabs = isFrench
@@ -132,20 +137,14 @@ export class FriendsComponent implements OnInit, OnDestroy {
         this.refreshFilteredLists();
     }
 
+    // Search is applied reactively by the facade's view-model stream.
     onSearchInput(): void {
-        this.refreshFilteredLists();
+        this.friendsFacadeService.setSearchTerm(this.searchTerm);
     }
 
     clearSearch(): void {
         this.searchTerm = '';
-        this.refreshFilteredLists();
-    }
-
-    refreshFilteredLists(): void {
-        const lists = this.friendsFacadeService.buildViewLists(this.searchTerm);
-        this.filteredDiscoverList = lists.discover;
-        this.filteredFriendsList = lists.friends;
-        this.blockedUsersList = lists.blocked;
+        this.friendsFacadeService.setSearchTerm(this.searchTerm);
     }
 
     getFilteredList(): AccountFriend[] {
@@ -162,9 +161,10 @@ export class FriendsComponent implements OnInit, OnDestroy {
         return this.friendsFacadeService.getRequestForUser(userId);
     }
 
+    // Command handlers: each intent delegates to facade + optionally asks confirmation.
     sendFriendRequest(userId: string): void {
         this.friendsFacadeService.sendFriendRequest(userId).subscribe(() => {
-            this.refreshFilteredLists();
+            this.friendsFacadeService.setSearchTerm(this.searchTerm);
         });
     }
 
@@ -176,20 +176,20 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
         this.cancelConfirmationService.askConfirmation(() => {
             this.friendsFacadeService.cancelFriendRequest(receiverId).subscribe(() => {
-                this.refreshFilteredLists();
+                this.friendsFacadeService.setSearchTerm(this.searchTerm);
             });
         }, dialogMessage);
     }
 
     acceptFriendRequest(requestId: string): void {
         this.friendsFacadeService.acceptFriendRequest(requestId).subscribe(() => {
-            this.refreshFilteredLists();
+            this.friendsFacadeService.setSearchTerm(this.searchTerm);
         });
     }
 
     rejectFriendRequest(requestId: string): void {
         this.friendsFacadeService.rejectFriendRequest(requestId).subscribe(() => {
-            this.refreshFilteredLists();
+            this.friendsFacadeService.setSearchTerm(this.searchTerm);
         });
     }
 
@@ -201,7 +201,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
         this.cancelConfirmationService.askConfirmation(() => {
             this.friendsFacadeService.removeFriend(friendId).subscribe(() => {
-                this.refreshFilteredLists();
+                this.friendsFacadeService.setSearchTerm(this.searchTerm);
             });
         }, dialogMessage);
     }
@@ -214,7 +214,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
         this.cancelConfirmationService.askConfirmation(() => {
             this.friendsFacadeService.blockNormalUser(blockedUserId).subscribe(() => {
-                this.refreshFilteredLists();
+                this.friendsFacadeService.setSearchTerm(this.searchTerm);
             });
         }, dialogMessage);
     }
@@ -227,7 +227,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
         this.cancelConfirmationService.askConfirmation(() => {
             this.friendsFacadeService.blockFriend(blockedFriendId).subscribe(() => {
-                this.refreshFilteredLists();
+                this.friendsFacadeService.setSearchTerm(this.searchTerm);
             });
         }, dialogMessage);
     }
@@ -240,7 +240,7 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
         this.cancelConfirmationService.askConfirmation(() => {
             this.friendsFacadeService.blockUserWithPendingRequest(otherUserId).subscribe(() => {
-                this.refreshFilteredLists();
+                this.friendsFacadeService.setSearchTerm(this.searchTerm);
             });
         }, dialogMessage);
     }
@@ -253,8 +253,19 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
         this.cancelConfirmationService.askConfirmation(() => {
             this.friendsFacadeService.unblockUser(blockedUserId).subscribe(() => {
-                this.refreshFilteredLists();
+                this.friendsFacadeService.setSearchTerm(this.searchTerm);
             });
         }, dialogMessage);
+    }
+
+    // Centralized assignment from reactive VM to component fields used by template.
+    private applyViewModel(viewModel: FriendsViewModel): void {
+        this.filteredDiscoverList = viewModel.discoverList;
+        this.filteredFriendsList = viewModel.friendsList;
+        this.blockedUsersList = viewModel.blockedList;
+        this.friendRequestsList = viewModel.requestList;
+        this.friendCount = viewModel.friendCount;
+        this.requestCount = viewModel.requestCount;
+        this.blockedCount = viewModel.blockedCount;
     }
 }

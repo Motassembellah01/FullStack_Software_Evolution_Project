@@ -75,7 +75,7 @@
 
             <div class="card-list" [@listAnimation]="requestCount">
                 <div
-                    *ngFor="let request of accountListenerService.friendRequestsReceived"
+                    *ngFor="let request of friendRequestsList"
                     class="user-card request-card"
                     @cardEnter
                 >

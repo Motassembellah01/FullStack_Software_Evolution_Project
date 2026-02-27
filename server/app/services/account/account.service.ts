@@ -76,6 +76,13 @@ export class AccountService {
         return Promise.all(friendRequests);
     }
 
+    /**
+     * Updates account-side request projections for both participants:
+     * - sender: append receiver to `friendsThatUserRequested`
+     * - receiver: append request object to `friendRequests`
+     *
+     * Canonical request storage still lives in friend collection.
+     */
     async addFriendRequest(userId: string, senderBasicInfo: Partial<Account>, requestId: string, session?: ClientSession): Promise<void> {
         // Get all information related to the friend request
         const friendRequest: FriendRequestDto = new FriendRequestDto();
@@ -89,8 +96,8 @@ export class AccountService {
             this.buildQueryOptions({ friendsThatUserRequested: 1 }, session),
         );
 
-        // Inform the friend handler gateway to update the list of friends already requested by sender list
-        this.friendHandlerGateway.updateFriendRequestSentList(senderBasicInfo.userId, senderAccountUpdate?.friendsThatUserRequested || []);
+        // Push projection update to sender in real-time.
+        this.friendHandlerGateway.emitFriendRequestsSentUpdated(senderBasicInfo.userId, senderAccountUpdate?.friendsThatUserRequested || []);
 
         // Add the friend request to the receiver's account
         const receiverAccountUpdate = await this.accountModel
@@ -98,9 +105,14 @@ export class AccountService {
             .exec();
 
         const friendRequestsListUpdated = receiverAccountUpdate?.friendRequests || [];
-        this.friendHandlerGateway.updateFriendRequestsThatUserReceived(userId, friendRequestsListUpdated);
+        // Push projection update to receiver in real-time.
+        this.friendHandlerGateway.emitFriendRequestsReceivedUpdated(userId, friendRequestsListUpdated);
     }
 
+    /**
+     * Removes request projections from both participants.
+     * Used by reject, cancel and block-with-pending-request flows.
+     */
     async removeFriendRequestFromAccount(request: Friend, session?: ClientSession): Promise<void> {
         const accountReceiver = await this.accountModel.findOneAndUpdate(
             { userId: request.receiverId },
@@ -108,18 +120,22 @@ export class AccountService {
             this.buildQueryOptions({ friendRequests: 1 }, session),
         );
         const friendRequestsReceiverListUpdated = accountReceiver?.friendRequests || [];
-        this.friendHandlerGateway.updateFriendRequestsThatUserReceived(request.receiverId, friendRequestsReceiverListUpdated);
+        this.friendHandlerGateway.emitFriendRequestsReceivedUpdated(request.receiverId, friendRequestsReceiverListUpdated);
 
-        // I also want to remove the user id of the receiver from the sender's friends that user requested
+        // Keep sender-side "requested list" in sync with receiver-side request removal.
         const accountSender = await this.accountModel.findOneAndUpdate(
             { userId: request.senderId },
             { $pull: { friendsThatUserRequested: request.receiverId } },
             this.buildQueryOptions({ friendsThatUserRequested: 1 }, session),
         );
         const friendsThatUserRequestedUpdated = accountSender?.friendsThatUserRequested || [];
-        this.friendHandlerGateway.updateFriendRequestSentList(request.senderId, friendsThatUserRequestedUpdated);
+        this.friendHandlerGateway.emitFriendRequestsSentUpdated(request.senderId, friendsThatUserRequestedUpdated);
     }
 
+    /**
+     * Materializes an accepted friendship into account projections and
+     * clears request-specific projection arrays.
+     */
     async addFriend(request: Friend, session?: ClientSession): Promise<void> {
         const receiverAccount = await this.accountModel.findOneAndUpdate(
             { userId: request.receiverId },
@@ -133,8 +149,8 @@ export class AccountService {
             this.buildQueryOptions({ friends: 1 }, session),
         );
 
-        this.friendHandlerGateway.updateFriendListReceiver(request.receiverId, receiverAccount?.friends || []);
-        this.friendHandlerGateway.updateFriendListSender(request.senderId, senderAccount?.friends || []);
+        this.friendHandlerGateway.emitFriendsUpdated(request.receiverId, receiverAccount?.friends || []);
+        this.friendHandlerGateway.emitFriendsUpdated(request.senderId, senderAccount?.friends || []);
 
         // Remove the friend request from the receiver's account
         const receiverAccountUpdate = await this.accountModel.findOneAndUpdate(
@@ -144,7 +160,7 @@ export class AccountService {
         );
 
         const friendRequestsListUpdated = receiverAccountUpdate?.friendRequests || [];
-        this.friendHandlerGateway.updateFriendRequestsThatUserReceived(request.receiverId, friendRequestsListUpdated);
+        this.friendHandlerGateway.emitFriendRequestsReceivedUpdated(request.receiverId, friendRequestsListUpdated);
 
         // Remove the id of receiver from the list of friends that the sender has requested (In sender account)
         const senderAccountUpdate = await this.accountModel.findOneAndUpdate(
@@ -154,7 +170,7 @@ export class AccountService {
         );
 
         const friendsThatUserRequestedUpdated = senderAccountUpdate?.friendsThatUserRequested || [];
-        this.friendHandlerGateway.updateFriendRequestSentList(request.senderId, friendsThatUserRequestedUpdated);
+        this.friendHandlerGateway.emitFriendRequestsSentUpdated(request.senderId, friendsThatUserRequestedUpdated);
     }
 
     async getFriendsThatUserRequested(userId: string): Promise<string[]> {
@@ -163,6 +179,9 @@ export class AccountService {
         return Promise.all(friendsThatUserRequested);
     }
 
+    /**
+     * Removes both sides of a friendship relation from account projections.
+     */
     async removeFriend(request: Friend, session?: ClientSession): Promise<void> {
         const senderAccount = await this.accountModel.findOneAndUpdate(
             { userId: request.senderId },
@@ -184,8 +203,8 @@ export class AccountService {
             throw new BadRequestException('Remove Friend: Receiver of friend request not found');
         }
 
-        this.friendHandlerGateway.updateFriendListReceiver(request.receiverId, receiverAccount?.friends || []);
-        this.friendHandlerGateway.updateFriendListSender(request.senderId, senderAccount?.friends || []);
+        this.friendHandlerGateway.emitFriendsUpdated(request.receiverId, receiverAccount?.friends || []);
+        this.friendHandlerGateway.emitFriendsUpdated(request.senderId, senderAccount?.friends || []);
     }
     async findByUserIds(userIds: string[]): Promise<Partial<Account>[]> {
         this.logger.log(`Getting accounts by userIds = ${userIds.join(', ')}`);
@@ -202,6 +221,11 @@ export class AccountService {
         }));
     }
 
+    /**
+     * Creates bi-directional block projections:
+     * - blocker.UsersBlocked += blocked user
+     * - blocked.UsersBlockingMe += blocker
+     */
     async addToBlockList(userId: string, blockedPersonId: string, session?: ClientSession): Promise<void> {
         const user = await this.accountModel.findOneAndUpdate(
             { userId },
@@ -215,10 +239,13 @@ export class AccountService {
             this.buildQueryOptions({ UsersBlockingMe: 1 }, session),
         );
 
-        this.friendHandlerGateway.updateBlockedUsersList(userId, user?.UsersBlocked || []);
-        this.friendHandlerGateway.updateBlockedByList(blockedPersonId, blockedPerson?.UsersBlockingMe || []);
+        this.friendHandlerGateway.emitBlockedUsersUpdated(userId, user?.UsersBlocked || []);
+        this.friendHandlerGateway.emitBlockedByUsersUpdated(blockedPersonId, blockedPerson?.UsersBlockingMe || []);
     }
 
+    /**
+     * Removes bi-directional block projections.
+     */
     async removeFromBlockList(userId: string, blockedPersonId: string, session?: ClientSession): Promise<void> {
         const user = await this.accountModel.findOneAndUpdate(
             { userId },
@@ -232,16 +259,18 @@ export class AccountService {
             this.buildQueryOptions({ UsersBlockingMe: 1 }, session),
         );
 
-        this.friendHandlerGateway.updateBlockedUsersList(userId, user?.UsersBlocked || []);
-        this.friendHandlerGateway.updateBlockedByList(blockedPersonId, unblockedPerson?.UsersBlockingMe || []);
+        this.friendHandlerGateway.emitBlockedUsersUpdated(userId, user?.UsersBlocked || []);
+        this.friendHandlerGateway.emitBlockedByUsersUpdated(blockedPersonId, unblockedPerson?.UsersBlockingMe || []);
     }
 
+    // Read model endpoint: users this account has blocked.
     async getBlockedUsers(userId: string): Promise<string[]> {
         const account = await this.findByUserId(userId);
         const blockedUsers = account.UsersBlocked;
         return Promise.all(blockedUsers);
     }
 
+    // Read model endpoint: users that currently block this account.
     async getBlockedByUsers(userId: string): Promise<string[]> {
         const account = await this.findByUserId(userId);
         const blockedByUsers = account.UsersBlockingMe;
