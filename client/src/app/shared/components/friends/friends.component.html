@@ -36,7 +36,9 @@
             <span class="tab-count" *ngIf="friendCount > 0">{{ friendCount > 99 ? '99+' : friendCount }}</span>
         </button>
         <button
-            class="tab-btn tab-btn--icon-count"
+            class="tab-btn"
+            [class.tab-btn--icon-count]="requestCount > 0"
+            [class.tab-btn--icon]="requestCount === 0"
             [class.active]="currentTab === FriendTab.Requests"
             (click)="switchTab(FriendTab.Requests)"
             matTooltip="{{ tabLabel.requests }}"
@@ -53,7 +55,9 @@
             <mat-icon class="tab-icon">explore</mat-icon>
         </button>
         <button
-            class="tab-btn tab-btn--icon-count"
+            class="tab-btn"
+            [class.tab-btn--icon-count]="blockedCount > 0"
+            [class.tab-btn--icon]="blockedCount === 0"
             [class.active]="currentTab === FriendTab.Blocked"
             (click)="switchTab(FriendTab.Blocked)"
             matTooltip="{{ tabLabel.blocked }}"
