@@ -32,7 +32,6 @@
             matTooltip="{{ tabLabel.friends }}"
         >
             <mat-icon class="tab-icon">people</mat-icon>
-            <span class="tab-label">{{ tabLabel.friends }}</span>
             <span class="tab-count" *ngIf="friendCount > 0">{{ friendCount > 99 ? '99+' : friendCount }}</span>
         </button>
         <button
