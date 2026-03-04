@@ -533,15 +533,20 @@ $radius-full: 9999px;
 .btn-outline-danger {
     width: 38px;
     height: 38px;
-    background: transparent;
-    color: $text-muted;
-    border: 1.5px solid $border;
+    background: $accent-red-light;
+    color: $accent-red;
+    border: 1.5px solid rgba($accent-red, 0.2);
     border-radius: $radius-full;
 
     &:hover {
-        background: $accent-red-light;
-        color: $accent-red;
-        border-color: $accent-red-light;
+        background: $accent-red;
+        color: white;
+        border-color: $accent-red;
+        box-shadow: 0 2px 8px rgba($accent-red, 0.35);
+    }
+
+    &:active {
+        transform: scale(0.96);
     }
 }
 
@@ -730,7 +735,6 @@ $radius-full: 9999px;
     .empty-title,
     .empty-subtitle,
     .tab-btn,
-    .btn-outline-danger,
     .btn-ghost,
     .search-clear {
         color: #9ca3af;
@@ -769,7 +773,6 @@ $radius-full: 9999px;
     .empty-title,
     .empty-subtitle,
     .tab-btn,
-    .btn-outline-danger,
     .btn-ghost,
     .search-clear {
         color: #8b5a6b;
@@ -807,6 +810,14 @@ $radius-full: 9999px;
     --friends-focus-ring: rgba(59, 130, 246, 0.35);
     --friends-shadow-sm: 0 1px 4px rgba(15, 23, 42, 0.08);
     --friends-shadow-md: 0 10px 28px rgba(15, 23, 42, 0.16);
+    --friends-fx-dot: rgba(255, 217, 102, 0.72);
+    --friends-fx-glow: rgba(251, 191, 36, 0.28);
+    --friends-fx-opacity: 0.5;
+    --friends-fx-nebula-a: rgba(251, 191, 36, 0.14);
+    --friends-fx-nebula-b: rgba(245, 158, 11, 0.12);
+    --friends-fx-nebula-c: rgba(253, 224, 71, 0.1);
+    --friends-fx-particle: rgba(255, 244, 214, 0.7);
+    --friends-fx-particle-soft: rgba(253, 230, 138, 0.5);
 }
 
 :host-context(.dark-mode) {
@@ -822,6 +833,14 @@ $radius-full: 9999px;
     --friends-success: #4ade80;
     --friends-danger: #fb7185;
     --friends-focus-ring: rgba(96, 165, 250, 0.45);
+    --friends-fx-dot: rgba(255, 230, 153, 0.88);
+    --friends-fx-glow: rgba(252, 211, 77, 0.42);
+    --friends-fx-opacity: 0.62;
+    --friends-fx-nebula-a: rgba(251, 191, 36, 0.2);
+    --friends-fx-nebula-b: rgba(245, 158, 11, 0.16);
+    --friends-fx-nebula-c: rgba(253, 224, 71, 0.14);
+    --friends-fx-particle: rgba(255, 250, 230, 0.82);
+    --friends-fx-particle-soft: rgba(254, 240, 138, 0.58);
 }
 
 :host-context(.christmas) {
@@ -837,6 +856,14 @@ $radius-full: 9999px;
     --friends-success: #4ade80;
     --friends-danger: #f87171;
     --friends-focus-ring: rgba(134, 239, 172, 0.4);
+    --friends-fx-dot: rgba(255, 236, 179, 0.84);
+    --friends-fx-glow: rgba(250, 204, 21, 0.4);
+    --friends-fx-opacity: 0.58;
+    --friends-fx-nebula-a: rgba(74, 222, 128, 0.12);
+    --friends-fx-nebula-b: rgba(251, 191, 36, 0.18);
+    --friends-fx-nebula-c: rgba(253, 224, 71, 0.14);
+    --friends-fx-particle: rgba(255, 249, 220, 0.78);
+    --friends-fx-particle-soft: rgba(254, 240, 138, 0.52);
 }
 
 :host-context(.valentines) {
@@ -852,13 +879,79 @@ $radius-full: 9999px;
     --friends-success: #16a34a;
     --friends-danger: #dc2626;
     --friends-focus-ring: rgba(217, 70, 123, 0.32);
+    --friends-fx-dot: rgba(255, 219, 153, 0.72);
+    --friends-fx-glow: rgba(251, 191, 36, 0.3);
+    --friends-fx-opacity: 0.44;
+    --friends-fx-nebula-a: rgba(244, 114, 182, 0.1);
+    --friends-fx-nebula-b: rgba(251, 191, 36, 0.12);
+    --friends-fx-nebula-c: rgba(253, 224, 71, 0.1);
+    --friends-fx-particle: rgba(255, 246, 220, 0.62);
+    --friends-fx-particle-soft: rgba(252, 211, 77, 0.4);
 }
 
 .friends-panel {
+    position: relative;
     background: linear-gradient(180deg, color-mix(in srgb, var(--friends-panel-bg) 88%, white 12%) 0%, var(--friends-panel-bg) 100%);
     border: 1px solid var(--friends-border);
     border-radius: 16px;
     box-shadow: var(--friends-shadow-md);
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.friends-fx,
+.friends-fx::before,
+.friends-fx::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.friends-fx {
+    content: '';
+    opacity: calc(var(--friends-fx-opacity) * 0.95);
+    background-image:
+        radial-gradient(130% 90% at 8% 12%, var(--friends-fx-nebula-a) 0%, transparent 62%),
+        radial-gradient(95% 72% at 92% 18%, var(--friends-fx-nebula-b) 0%, transparent 60%),
+        radial-gradient(100% 80% at 48% 100%, var(--friends-fx-nebula-c) 0%, transparent 64%);
+    animation: friends-nebula-float 20s ease-in-out infinite alternate;
+}
+
+.friends-fx::before {
+    content: '';
+    opacity: calc(var(--friends-fx-opacity) * 0.9);
+    background-image:
+        radial-gradient(circle at 14% 44%, var(--friends-fx-glow) 0 3px, transparent 8px),
+        radial-gradient(circle at 33% 12%, var(--friends-fx-glow) 0 2.5px, transparent 7px),
+        radial-gradient(circle at 57% 58%, var(--friends-fx-glow) 0 3px, transparent 8px),
+        radial-gradient(circle at 74% 20%, var(--friends-fx-glow) 0 2px, transparent 6px),
+        radial-gradient(circle at 86% 74%, var(--friends-fx-glow) 0 2.5px, transparent 7px);
+    background-size: auto;
+    animation: friends-stars-drift-reverse 22s linear infinite;
+}
+
+.friends-fx::after {
+    content: '';
+    opacity: calc(var(--friends-fx-opacity) * 0.9);
+    background-image:
+        radial-gradient(circle at 9% 18%, var(--friends-fx-particle) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 17% 73%, var(--friends-fx-particle-soft) 0 1.1px, transparent 2px),
+        radial-gradient(circle at 27% 36%, var(--friends-fx-particle) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 39% 62%, var(--friends-fx-particle-soft) 0 1.1px, transparent 2px),
+        radial-gradient(circle at 52% 24%, var(--friends-fx-particle) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 64% 76%, var(--friends-fx-particle-soft) 0 1.1px, transparent 2px),
+        radial-gradient(circle at 77% 40%, var(--friends-fx-particle) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 88% 20%, var(--friends-fx-particle-soft) 0 1.1px, transparent 2px),
+        radial-gradient(circle at 94% 68%, var(--friends-fx-particle) 0 1px, transparent 1.8px);
+    animation:
+        friends-particles-drift 13s linear infinite,
+        friends-particles-twinkle 2.2s ease-in-out infinite alternate;
+}
+
+.friends-panel > * {
+    position: relative;
+    z-index: 1;
 }
 
 .panel-title,
@@ -963,16 +1056,77 @@ $radius-full: 9999px;
     background: color-mix(in srgb, var(--friends-accent) 88%, black 12%);
 }
 
+.btn-outline-danger {
+    background: color-mix(in srgb, var(--friends-danger) 18%, transparent 82%);
+    color: var(--friends-danger);
+    border-color: color-mix(in srgb, var(--friends-danger) 24%, transparent 76%);
+}
+
 .btn-outline-danger:hover,
 .btn-cancel:hover,
 .btn-decline:hover,
 .btn-block-visible:hover {
-    background: color-mix(in srgb, var(--friends-danger) 18%, transparent 82%) !important;
-    border-color: color-mix(in srgb, var(--friends-danger) 24%, transparent 76%);
-    color: var(--friends-danger) !important;
+    background: var(--friends-danger) !important;
+    border-color: var(--friends-danger);
+    color: white !important;
 }
 
 .friends-panel :is(button, input):focus-visible {
     outline: 2px solid var(--friends-focus-ring);
     outline-offset: 2px;
+}
+
+@keyframes friends-stars-drift {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-16px);
+    }
+}
+
+@keyframes friends-stars-drift-reverse {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(12px);
+    }
+}
+
+@keyframes friends-particles-twinkle {
+    0% {
+        opacity: calc(var(--friends-fx-opacity) * 0.58);
+        filter: brightness(0.9);
+    }
+    100% {
+        opacity: calc(var(--friends-fx-opacity) * 1.08);
+        filter: brightness(1.28);
+    }
+}
+
+@keyframes friends-nebula-float {
+    0% {
+        background-position: 0% 0%, 100% 10%, 50% 100%;
+    }
+    100% {
+        background-position: 8% -6%, 94% 16%, 55% 92%;
+    }
+}
+
+@keyframes friends-particles-drift {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    100% {
+        transform: translateY(-18px) translateX(7px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .friends-fx,
+    .friends-fx::before,
+    .friends-fx::after {
+        animation: none !important;
+    }
 }
