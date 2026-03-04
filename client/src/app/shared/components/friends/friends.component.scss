@@ -564,17 +564,21 @@ $radius-full: 9999px;
 }
 
 .btn-block-visible {
-    opacity: 0.45;
-    transition: opacity 0.2s, background 0.2s, color 0.2s;
-
-    .user-card:hover & {
-        opacity: 1;
-    }
+    opacity: 1;
+    background: rgba($pending-yellow, 0.16);
+    color: darken($pending-yellow, 8%);
+    border: 1.5px solid rgba($pending-yellow, 0.28);
+    transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-        background: $accent-red-light !important;
-        color: $accent-red !important;
-        opacity: 1;
+        background: $pending-yellow !important;
+        color: white !important;
+        border-color: $pending-yellow;
+        box-shadow: 0 2px 8px rgba($pending-yellow, 0.35);
+    }
+
+    &:active {
+        transform: scale(0.96);
     }
 }
 
@@ -1064,10 +1068,21 @@ $radius-full: 9999px;
 
 .btn-outline-danger:hover,
 .btn-cancel:hover,
-.btn-decline:hover,
-.btn-block-visible:hover {
+.btn-decline:hover {
     background: var(--friends-danger) !important;
     border-color: var(--friends-danger);
+    color: white !important;
+}
+
+.btn-block-visible {
+    background: color-mix(in srgb, #f59e0b 18%, transparent 82%);
+    color: #f59e0b;
+    border: 1.5px solid color-mix(in srgb, #f59e0b 30%, transparent 70%);
+}
+
+.btn-block-visible:hover {
+    background: #f59e0b !important;
+    border-color: #f59e0b;
     color: white !important;
 }
 
