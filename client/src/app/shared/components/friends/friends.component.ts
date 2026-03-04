@@ -60,17 +60,28 @@ export enum FriendTab {
 })
 export class FriendsComponent implements OnInit, OnDestroy {
     readonly FriendTab = FriendTab;
+    readonly pageSize = 8;
 
     // Local UI state (view mode + search value).
     tabs: string[];
     currentTab: FriendTab = FriendTab.Friends;
     searchTerm: string = '';
+    private readonly pageByTab: Record<FriendTab, number> = {
+        [FriendTab.Discover]: 0,
+        [FriendTab.Friends]: 0,
+        [FriendTab.Requests]: 0,
+        [FriendTab.Blocked]: 0,
+    };
 
     // Data slices bound directly by template.
     filteredDiscoverList: AccountFriend[] = [];
     filteredFriendsList: AccountFriend[] = [];
     blockedUsersList: AccountFriend[] = [];
     friendRequestsList: FriendRequestData[] = [];
+    pagedDiscoverList: AccountFriend[] = [];
+    pagedFriendsList: AccountFriend[] = [];
+    pagedBlockedUsersList: AccountFriend[] = [];
+    pagedFriendRequestsList: FriendRequestData[] = [];
     friendCount = 0;
     requestCount = 0;
     blockedCount = 0;
@@ -139,16 +150,19 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
     // Search is applied reactively by the facade's view-model stream.
     onSearchInput(): void {
+        this.resetPaginationForCurrentTab();
         this.friendsFacadeService.setSearchTerm(this.searchTerm);
     }
 
     clearSearch(): void {
         this.searchTerm = '';
+        this.resetPaginationForCurrentTab();
         this.friendsFacadeService.setSearchTerm(this.searchTerm);
     }
 
     // Legacy UI hook kept for tab changes after moving filtering to the facade stream.
     refreshFilteredLists(): void {
+        this.resetPaginationForCurrentTab();
         this.friendsFacadeService.setSearchTerm(this.searchTerm);
     }
 
@@ -164,6 +178,40 @@ export class FriendsComponent implements OnInit, OnDestroy {
 
     getRequestForUser(userId: string) {
         return this.friendsFacadeService.getRequestForUser(userId);
+    }
+
+    canGoToPreviousPage(tab: FriendTab): boolean {
+        return this.pageByTab[tab] > 0;
+    }
+
+    canGoToNextPage(tab: FriendTab): boolean {
+        const totalPages = this.getTotalPages(tab);
+        return this.pageByTab[tab] < totalPages - 1;
+    }
+
+    goToPreviousPage(tab: FriendTab): void {
+        this.pageByTab[tab] = Math.max(0, this.pageByTab[tab] - 1);
+        this.updatePagedLists();
+    }
+
+    goToNextPage(tab: FriendTab): void {
+        const totalPages = this.getTotalPages(tab);
+        this.pageByTab[tab] = Math.min(totalPages - 1, this.pageByTab[tab] + 1);
+        this.updatePagedLists();
+    }
+
+    shouldShowPager(tab: FriendTab): boolean {
+        return this.getListLength(tab) > this.pageSize;
+    }
+
+    getPaginationRangeLabel(tab: FriendTab): string {
+        const total = this.getListLength(tab);
+        if (total === 0) {
+            return '0';
+        }
+        const start = this.pageByTab[tab] * this.pageSize + 1;
+        const end = Math.min(start + this.pageSize - 1, total);
+        return `${start}-${end} of ${total}`;
     }
 
     getOfflineElapsedLabel(account: AccountFriend): string {
@@ -280,6 +328,51 @@ export class FriendsComponent implements OnInit, OnDestroy {
         this.friendCount = viewModel.friendCount;
         this.requestCount = viewModel.requestCount;
         this.blockedCount = viewModel.blockedCount;
+        this.clampPageIndexes();
+        this.updatePagedLists();
+    }
+
+    private resetPaginationForCurrentTab(): void {
+        this.pageByTab[this.currentTab] = 0;
+        this.updatePagedLists();
+    }
+
+    private getListLength(tab: FriendTab): number {
+        if (tab === FriendTab.Discover) {
+            return this.filteredDiscoverList.length;
+        }
+        if (tab === FriendTab.Friends) {
+            return this.filteredFriendsList.length;
+        }
+        if (tab === FriendTab.Requests) {
+            return this.friendRequestsList.length;
+        }
+        return this.blockedUsersList.length;
+    }
+
+    private getTotalPages(tab: FriendTab): number {
+        const listLength = this.getListLength(tab);
+        return Math.max(1, Math.ceil(listLength / this.pageSize));
+    }
+
+    private clampPageIndexes(): void {
+        const tabs = [FriendTab.Discover, FriendTab.Friends, FriendTab.Requests, FriendTab.Blocked];
+        tabs.forEach((tab) => {
+            const maxPageIndex = this.getTotalPages(tab) - 1;
+            this.pageByTab[tab] = Math.min(this.pageByTab[tab], maxPageIndex);
+        });
+    }
+
+    private getPageSlice<T>(items: T[], tab: FriendTab): T[] {
+        const start = this.pageByTab[tab] * this.pageSize;
+        return items.slice(start, start + this.pageSize);
+    }
+
+    private updatePagedLists(): void {
+        this.pagedDiscoverList = this.getPageSlice(this.filteredDiscoverList, FriendTab.Discover);
+        this.pagedFriendsList = this.getPageSlice(this.filteredFriendsList, FriendTab.Friends);
+        this.pagedBlockedUsersList = this.getPageSlice(this.blockedUsersList, FriendTab.Blocked);
+        this.pagedFriendRequestsList = this.getPageSlice(this.friendRequestsList, FriendTab.Requests);
     }
 
     private parseTimestamp(rawValue: string | null): Date | null {

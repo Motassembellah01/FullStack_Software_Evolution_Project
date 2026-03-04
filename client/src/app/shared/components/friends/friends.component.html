@@ -76,9 +76,9 @@
                 <p class="empty-subtitle">{{ 'FRIENDS.NO_REQUESTS_SUBTITLE' | translate }}</p>
             </div>
 
-            <div class="card-list" [@listAnimation]="requestCount">
+            <div class="card-list" [@listAnimation]="pagedFriendRequestsList.length">
                 <div
-                    *ngFor="let request of friendRequestsList"
+                    *ngFor="let request of pagedFriendRequestsList"
                     class="user-card request-card"
                     @cardEnter
                 >
@@ -111,6 +111,15 @@
                     </div>
                 </div>
             </div>
+            <div class="list-pager" *ngIf="shouldShowPager(FriendTab.Requests)">
+                <button class="pager-btn" (click)="goToPreviousPage(FriendTab.Requests)" [disabled]="!canGoToPreviousPage(FriendTab.Requests)">
+                    Previous
+                </button>
+                <span class="pager-range">{{ getPaginationRangeLabel(FriendTab.Requests) }}</span>
+                <button class="pager-btn" (click)="goToNextPage(FriendTab.Requests)" [disabled]="!canGoToNextPage(FriendTab.Requests)">
+                    Next
+                </button>
+            </div>
         </div>
 
         <!-- ===== DISCOVER TAB ===== -->
@@ -121,9 +130,9 @@
                 <p class="empty-subtitle">{{ 'FRIENDS.NO_USERS_SUBTITLE' | translate }}</p>
             </div>
 
-            <div class="card-list" [@listAnimation]="filteredDiscoverList.length">
+            <div class="card-list" [@listAnimation]="pagedDiscoverList.length">
                 <div
-                    *ngFor="let account of filteredDiscoverList"
+                    *ngFor="let account of pagedDiscoverList"
                     class="user-card"
                     @cardEnter
                 >
@@ -199,6 +208,15 @@
                     </div>
                 </div>
             </div>
+            <div class="list-pager" *ngIf="shouldShowPager(FriendTab.Discover)">
+                <button class="pager-btn" (click)="goToPreviousPage(FriendTab.Discover)" [disabled]="!canGoToPreviousPage(FriendTab.Discover)">
+                    Previous
+                </button>
+                <span class="pager-range">{{ getPaginationRangeLabel(FriendTab.Discover) }}</span>
+                <button class="pager-btn" (click)="goToNextPage(FriendTab.Discover)" [disabled]="!canGoToNextPage(FriendTab.Discover)">
+                    Next
+                </button>
+            </div>
         </div>
 
         <!-- ===== FRIENDS TAB ===== -->
@@ -209,9 +227,9 @@
                 <p class="empty-subtitle">{{ 'FRIENDS.NO_FRIENDS_SUBTITLE' | translate }}</p>
             </div>
 
-            <div class="card-list" [@listAnimation]="filteredFriendsList.length">
+            <div class="card-list" [@listAnimation]="pagedFriendsList.length">
                 <div
-                    *ngFor="let account of filteredFriendsList"
+                    *ngFor="let account of pagedFriendsList"
                     class="user-card friend-card"
                     @cardEnter
                 >
@@ -245,6 +263,15 @@
                     </div>
                 </div>
             </div>
+            <div class="list-pager" *ngIf="shouldShowPager(FriendTab.Friends)">
+                <button class="pager-btn" (click)="goToPreviousPage(FriendTab.Friends)" [disabled]="!canGoToPreviousPage(FriendTab.Friends)">
+                    Previous
+                </button>
+                <span class="pager-range">{{ getPaginationRangeLabel(FriendTab.Friends) }}</span>
+                <button class="pager-btn" (click)="goToNextPage(FriendTab.Friends)" [disabled]="!canGoToNextPage(FriendTab.Friends)">
+                    Next
+                </button>
+            </div>
         </div>
 
         <!-- ===== BLOCKED TAB ===== -->
@@ -255,9 +282,9 @@
                 <p class="empty-subtitle">{{ 'FRIENDS.NO_BLOCKED_SUBTITLE' | translate }}</p>
             </div>
 
-            <div class="card-list" [@listAnimation]="blockedUsersList.length">
+            <div class="card-list" [@listAnimation]="pagedBlockedUsersList.length">
                 <div
-                    *ngFor="let account of blockedUsersList"
+                    *ngFor="let account of pagedBlockedUsersList"
                     class="user-card blocked-card"
                     @cardEnter
                 >
@@ -285,6 +312,15 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <div class="list-pager" *ngIf="shouldShowPager(FriendTab.Blocked)">
+                <button class="pager-btn" (click)="goToPreviousPage(FriendTab.Blocked)" [disabled]="!canGoToPreviousPage(FriendTab.Blocked)">
+                    Previous
+                </button>
+                <span class="pager-range">{{ getPaginationRangeLabel(FriendTab.Blocked) }}</span>
+                <button class="pager-btn" (click)="goToNextPage(FriendTab.Blocked)" [disabled]="!canGoToNextPage(FriendTab.Blocked)">
+                    Next
+                </button>
             </div>
         </div>
     </div>
