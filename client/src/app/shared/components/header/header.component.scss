@@ -46,7 +46,6 @@
     align-items: center;
     margin-left: auto;
     border-radius: 0 0 0 12px;
-    background-color: var(--header-panel-bg);
     transition: background-color 0.3s ease;
 }
 
@@ -127,7 +126,7 @@
     display: flex;
     align-items: center;
     margin-left: 10px;
-    gap: 2px;
+    gap: 5px;
 }
 
 .cookie-display {
@@ -146,7 +145,7 @@
 .header-btn {
     margin-left: 6px;
     min-width: 40px !important;
-    padding: 0 8px !important;
+    padding: 0 14px !important;
     border-radius: 8px !important;
     transition: transform 0.15s ease, background-color 0.2s ease;
 }
@@ -183,7 +182,7 @@
 .chat-box {
     background-color: var(--header-panel-bg);
     justify-items: center;
-    width: var(--side-panel-width);
+    width: 316px;
     padding: 16px;
     height: calc(100vh - 75px);
     z-index: 2;
@@ -581,7 +580,7 @@ button.toggled {
 }
 
 span {
-    margin-top: 0.5rem;
+    margin-top: 0.2rem;
 }
 .pseudo {
     white-space: nowrap;
