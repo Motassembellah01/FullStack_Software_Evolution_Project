@@ -13,6 +13,7 @@ import { io, Socket } from 'socket.io-client';
 export class SocketService {
     socket: Socket;
     auth0Id: string;
+    private profileLoaded = false;
 
     isSocketAlive(): boolean {
         return this.socket?.connected;
@@ -27,11 +28,14 @@ export class SocketService {
     connect(): void {
         if (this.isSocketAlive()) return;
         this.socket = io(this.serverConfig.serverUrlRoot, { transports: ['websocket', 'polling'] });
+        this.socket.on('connect', () => {
+            this.registerCurrentUser();
+        });
         (window as any).electronAPI.getProfile().then((profile: any) => {
             if (!profile) return;
-            this.send(ChatSocketsEmitEvents.UserInfo, profile?.sub as string);
             this.auth0Id = profile?.sub;
-            this.socket.emit('register', this.auth0Id);
+            this.profileLoaded = true;
+            this.registerCurrentUser();
         });
     }
 
@@ -62,5 +66,13 @@ export class SocketService {
     // eslint-disable-next-line @typescript-eslint/ban-types
     send<T>(event: string, data?: T, callback?: Function): void {
         this.socket.emit(event, ...[data, callback].filter((x) => x));
+    }
+
+    private registerCurrentUser(): void {
+        if (!this.socket || !this.socket.connected || !this.profileLoaded || !this.auth0Id) {
+            return;
+        }
+        this.send(ChatSocketsEmitEvents.UserInfo, this.auth0Id);
+        this.socket.emit('register', this.auth0Id);
     }
 }

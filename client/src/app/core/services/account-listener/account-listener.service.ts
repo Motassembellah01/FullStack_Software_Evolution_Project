@@ -175,6 +175,12 @@ export class AccountListenerService {
         this.socketService.on('friendPresenceUpdated', (presenceEntry: FriendPresenceEntry) => {
             this.mergePresenceEntries([presenceEntry]);
         });
+
+        // Request a fresh presence snapshot in case initial register/snapshot
+        // happened before these listeners were attached.
+        if (this.socketService.isSocketAlive() && this.socketService.auth0Id) {
+            this.socketService.send('register', this.socketService.auth0Id);
+        }
     }
 
     /**
